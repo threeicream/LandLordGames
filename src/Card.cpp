@@ -1,4 +1,13 @@
 #include "Card.h"
+#include <QtCore/qhash.h> // 包含 qHash 函数的声明
+
+uint qHash(const Card& card, uint seed)
+{
+	uint hash = seed;
+	hash = qHash(static_cast<int>(card.getPoint()), hash); 
+	hash = qHash(static_cast<int>(card.getSuit()), hash);   
+	return hash;
+}
 
 Card::Card()
 {
@@ -28,4 +37,27 @@ Card::CardPoint Card::getPoint() const
 Card::CardSuit Card::getSuit() const
 {
 	return m_suit;
+}
+
+bool Card::operator==(const Card& other) const
+{
+	return (m_point == other.m_point) && (m_suit == other.m_suit);
+}
+
+bool lessSort(const Card& a, const Card& b)
+{
+	if (a.getPoint() == b.getPoint()) {
+		return a.getSuit() < b.getSuit();
+	}
+	else
+		return a.getPoint() < b.getPoint();
+}
+
+bool greatorSort(const Card& a, const Card& b)
+{
+	if (a.getPoint() == b.getPoint()) {
+		return a.getSuit() > b.getSuit();
+	}
+	else
+		return a.getPoint() > b.getPoint();
 }

@@ -9,7 +9,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
  
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
  
  
@@ -35,7 +35,7 @@ ${PRO_SRC}
 ${PRO_INCLUDE}
 #${PRO_UI}
 ${PRO_RESOURCES}
-)
+ )
  
 #制作静态库
 #add_library(库名称 STATIC 源文件1 [源文件2] ...) 

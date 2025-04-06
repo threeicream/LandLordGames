@@ -1,6 +1,8 @@
 #pragma once
 #include <QVector>
-//using CardLsit = QVector<Card>;
+class Card;
+
+using CardLsit = QVector<Card>;
 
 class Card
 {
@@ -35,7 +37,17 @@ public:
 	void setSuit(CardSuit suit);
 	CardPoint getPoint() const;
 	CardSuit getSuit() const;
+
+	// 重载 == 运算符
+	bool operator==(const Card& other) const;
+	//重写全局函数qHash
 private:
 	CardPoint m_point;
 	CardSuit m_suit;
 };
+
+//对象比较
+bool lessSort(const Card& a, const Card& b);
+bool greatorSort(const Card& a, const Card& b);
+
+uint qHash(const Card& card, uint seed = 0);//设置一个哈希键值
