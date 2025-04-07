@@ -62,8 +62,8 @@ public:
 	Cards getPendCards()const;
 
 	//虚函数
-	virtual void prepareCallLord() = 0;
-	virtual void preparePlayHand() = 0;
+	virtual void prepareCallLord();
+	virtual void preparePlayHand();
 public:
 	Player(QObject* parent = nullptr);
 	Player(QString name,QObject* parent = nullptr);

@@ -31,6 +31,7 @@ public:
 	};
 	
 	Card();
+	explicit Card(const CardPoint point, const CardSuit suit);
 	~Card();
 public:
 	void setPoint(CardPoint point);

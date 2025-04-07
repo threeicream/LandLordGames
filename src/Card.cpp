@@ -14,6 +14,12 @@ Card::Card()
 
 }
 
+Card::Card(const CardPoint point, const CardSuit suit)
+{
+	setPoint(point);
+	setSuit(suit);
+}
+
 Card::~Card()
 {
 

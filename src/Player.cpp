@@ -150,3 +150,11 @@ Cards Player::getPendCards() const
 	return m_pendCards;
 }
 
+void Player::prepareCallLord()
+{
+}
+
+void Player::preparePlayHand()
+{
+}
+
