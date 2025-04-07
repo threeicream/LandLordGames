@@ -1,12 +1,12 @@
 #include <QApplication>
 #include <QWidget>
-#include "MainWindow.h"
+#include "gamePanel.h"
 #include <QPainter>
 
 int main(int argc, char* argv[]) {
 	QApplication a(argc, argv);
 
-	MainWindow w;
+	gamePanel w;
 	w.show();
 	return /*QApplication::*/a.exec();
 }
