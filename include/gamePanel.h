@@ -13,4 +13,6 @@ public:
 
 private:
 	Ui::gamePanel ui;
+private:
+	
 };
