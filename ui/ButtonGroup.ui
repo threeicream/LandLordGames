@@ -50,7 +50,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="startButton">
+        <widget class="myButton" name="startButton">
          <property name="text">
           <string>开始</string>
          </property>
@@ -87,7 +87,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="playCardButton">
+        <widget class="myButton" name="playCardButton">
          <property name="text">
           <string>PushButton</string>
          </property>
@@ -117,14 +117,14 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>133</width>
+           <width>142</width>
            <height>20</height>
           </size>
          </property>
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="passsButton">
+        <widget class="myButton" name="passsButton">
          <property name="text">
           <string>PushButton</string>
          </property>
@@ -147,7 +147,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="enterButton">
+        <widget class="myButton" name="enterButton">
          <property name="text">
           <string>PushButton</string>
          </property>
@@ -160,7 +160,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>132</width>
+           <width>141</width>
            <height>20</height>
           </size>
          </property>
@@ -184,7 +184,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="zeroButton">
+        <widget class="myButton" name="zeroButton">
          <property name="text">
           <string>PushButton</string>
          </property>
@@ -207,7 +207,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="oneButton">
+        <widget class="myButton" name="oneButton">
          <property name="text">
           <string>PushButton</string>
          </property>
@@ -230,7 +230,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="twoButton">
+        <widget class="myButton" name="twoButton">
          <property name="text">
           <string>PushButton</string>
          </property>
@@ -253,7 +253,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="threeButton">
+        <widget class="myButton" name="threeButton">
          <property name="text">
           <string>PushButton</string>
          </property>
@@ -280,6 +280,13 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>myButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">mybutton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

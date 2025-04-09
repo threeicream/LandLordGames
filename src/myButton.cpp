@@ -48,6 +48,9 @@ void myButton::setImage(QString normalImgPath, QString pressedImgPath, QString h
 		"    border-image: url(%3);"
 		"}").arg(m_normalImgPath, m_hoverImgPath, m_pressedImgPath);
 	setStyleSheet(styleSheet);
+	
+	//设置按钮的大小
+	setFixedSize(QSize(90,45));
 
 	//m_pixmap.load(m_normalImgPath);
 }

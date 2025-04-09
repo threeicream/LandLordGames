@@ -101,5 +101,6 @@
         <file>image/start-1.png</file>
         <file>image/start-2.png</file>
         <file>image/start-3.png</file>
+        <file>stylesheet/style1.qss</file>
     </qresource>
 </RCC>

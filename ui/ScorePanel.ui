@@ -18,12 +18,12 @@
     <widget class="QLabel" name="label">
      <property name="font">
       <font>
-       <family>华文琥珀</family>
+       <family>华文细黑</family>
        <pointsize>15</pointsize>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">color: rgb(85, 255, 255);</string>
+      <string notr="true">color: rgb(255, 0, 255);</string>
      </property>
      <property name="text">
       <string>玩家</string>
@@ -38,10 +38,11 @@
      <property name="font">
       <font>
        <family>华文琥珀</family>
+       <pointsize>14</pointsize>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">color: rgb(85, 255, 255);</string>
+      <string notr="true">color: rgb(255, 0, 255);</string>
      </property>
      <property name="text">
       <string/>
@@ -55,12 +56,12 @@
     <widget class="QLabel" name="label_4">
      <property name="font">
       <font>
-       <family>华文琥珀</family>
+       <family>华文细黑</family>
        <pointsize>15</pointsize>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">color: rgb(85, 255, 255);</string>
+      <string notr="true">color: rgb(255, 0, 255);</string>
      </property>
      <property name="text">
       <string>分</string>
@@ -71,12 +72,12 @@
     <widget class="QLabel" name="label_2">
      <property name="font">
       <font>
-       <family>华文琥珀</family>
+       <family>华文细黑</family>
        <pointsize>15</pointsize>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">color: rgb(85, 255, 255);</string>
+      <string notr="true">color: rgb(255, 0, 255);</string>
      </property>
      <property name="text">
       <string>robot1</string>
@@ -91,10 +92,11 @@
      <property name="font">
       <font>
        <family>华文琥珀</family>
+       <pointsize>14</pointsize>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">color: rgb(85, 255, 255);</string>
+      <string notr="true">color: rgb(255, 0, 255);</string>
      </property>
      <property name="text">
       <string/>
@@ -108,12 +110,12 @@
     <widget class="QLabel" name="label_5">
      <property name="font">
       <font>
-       <family>华文琥珀</family>
+       <family>华文细黑</family>
        <pointsize>15</pointsize>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">color: rgb(85, 255, 255);</string>
+      <string notr="true">color: rgb(255, 0, 255);</string>
      </property>
      <property name="text">
       <string>分</string>
@@ -127,12 +129,12 @@
     <widget class="QLabel" name="label_3">
      <property name="font">
       <font>
-       <family>华文琥珀</family>
+       <family>华文细黑</family>
        <pointsize>15</pointsize>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">color: rgb(85, 255, 255);</string>
+      <string notr="true">color: rgb(255, 0, 255);</string>
      </property>
      <property name="text">
       <string>robot2</string>
@@ -147,10 +149,11 @@
      <property name="font">
       <font>
        <family>华文琥珀</family>
+       <pointsize>14</pointsize>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">color: rgb(85, 255, 255);</string>
+      <string notr="true">color: rgb(255, 0, 255);</string>
      </property>
      <property name="text">
       <string/>
@@ -164,12 +167,12 @@
     <widget class="QLabel" name="label_6">
      <property name="font">
       <font>
-       <family>华文琥珀</family>
+       <family>华文细黑</family>
        <pointsize>15</pointsize>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">color: rgb(85, 255, 255);</string>
+      <string notr="true">color: rgb(255, 0, 255);</string>
      </property>
      <property name="text">
       <string>分</string>
