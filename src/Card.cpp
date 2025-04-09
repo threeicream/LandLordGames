@@ -50,6 +50,11 @@ bool Card::operator==(const Card& other) const
 	return (m_point == other.m_point) && (m_suit == other.m_suit);
 }
 
+bool Card::operator<(const Card& other) const
+{
+	return (m_point < other.m_point);
+}
+
 bool lessSort(const Card& a, const Card& b)
 {
 	if (a.getPoint() == b.getPoint()) {

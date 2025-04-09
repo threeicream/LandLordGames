@@ -42,6 +42,9 @@ public:
 	// 重载 == 运算符
 	bool operator==(const Card& other) const;
 	//重写全局函数qHash
+
+	//重载 < 运算符
+	bool operator<(const Card& other) const;
 private:
 	CardPoint m_point;
 	CardSuit m_suit;
