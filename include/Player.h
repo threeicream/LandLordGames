@@ -74,7 +74,7 @@ protected:
 	Sex m_sex;
 	Direction m_direction;
 	Type m_tyep;
-	int m_score = 0;
+	int m_score;
 	bool m_isWin;
 	Player* m_PrevPlayer;
 	Player* m_NextPlayer;

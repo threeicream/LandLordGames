@@ -3,12 +3,14 @@
 Player::Player(QObject *parent)
 	: QObject(parent)
 {
+	m_score = 0;
+	m_isWin = false;
 }
 
 Player::Player(QString name, QObject* parent /*= nullptr*/)
-	:QObject(parent),m_name(name)
+	:Player(parent)//委托构造函数
 {
-
+	m_name = name;
 }
 
 Player::~Player()
