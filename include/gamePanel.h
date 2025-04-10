@@ -6,13 +6,14 @@
 #include <QSize>
 #include <QVector>
 #include <QWidget>
+#include <QMouseEvent>
+#include "Cards.h"
+#include "GameControl.h"
 class QPaintEvent;
-class GameControl;
 class Player;
 class CardPanel;
 class QLabel;
-#include <QMouseEvent>
-#include "Cards.h"
+class QTimer;
 
 class gamePanel : public QWidget
 {
@@ -37,6 +38,15 @@ public:
 	void PlayerContextInit();
 	//初始化游戏场景
 	void GameSceneInit();
+	//处理游戏的状态
+	void gameStatusProcess(GameControl::GameStatus status);
+	//发牌
+	void startDispatchCard();
+	//定时器的处理动作
+	void onDispatchCard();
+	//移动扑克牌
+	void cardMoveStep(Player* player, int curPos);
+	void zoomY(int y);
 protected:
 	virtual void paintEvent(QPaintEvent* event)override;
 
@@ -77,4 +87,6 @@ private:
 	CardPanel* m_moveCard;
 	QVector<CardPanel*>m_last3Card;
 	QPoint m_baseCardPos;
+	GameControl::GameStatus m_gameStatus;
+	QTimer* m_timer;
 };
