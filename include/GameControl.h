@@ -54,7 +54,9 @@ public:
 	//处理叫地主
 
 	//处理出牌
-	
+signals:
+	void playerStatusChanged(Player* player, PlayerStatus status);
+
 public:
 	GameControl(QObject *parent);
 	~GameControl();

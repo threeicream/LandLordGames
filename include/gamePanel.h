@@ -51,6 +51,11 @@ public:
 	void disposCard(Player* player,Cards& cards);
 	//更新扑克牌在窗口的显示
 	void updatePlayerCards(Player* player);
+
+public slots:
+	//处理玩家状态的变化
+	void onPlayerStatusChanged(Player* player, GameControl::PlayerStatus status);
+
 protected:
 	virtual void paintEvent(QPaintEvent* event)override;
 

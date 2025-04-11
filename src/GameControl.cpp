@@ -105,6 +105,7 @@ void GameControl::resetCardData()
 void GameControl::startLordCard()
 {
 	m_currPlayer->prepareCallLord();
+	emit playerStatusChanged(m_currPlayer, PlayerStatus::THINKCALLLORD);
 }
 
 void GameControl::becomeLord(Player* player)

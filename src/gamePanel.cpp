@@ -55,6 +55,8 @@ void gamePanel::gameControlInit()
 	m_playerList.append(m_gameCtl->getLeftRobot());
 	m_playerList.append(m_gameCtl->getRightRobot());
 	m_playerList.append(m_gameCtl->getUserPlayer());
+
+	connect(m_gameCtl, &GameControl::playerStatusChanged, this, &gamePanel::onPlayerStatusChanged);
 }
 
 void gamePanel::UpdateScorePanel()
@@ -208,13 +210,24 @@ void gamePanel::gameStatusProcess(GameControl::GameStatus status)
 {
 	//记录游戏状态
 	m_gameStatus = status;
+	CardLsit last3Card; // 在 switch 语句之前声明 last3Card
 	//处理游戏状态
 	switch (m_gameStatus)
 	{
 	case GameControl::DISPATCHCARD://发牌
 		startDispatchCard();
 		break;
-	case GameControl::CALLINGLORD:
+	case GameControl::CALLINGLORD://叫地主
+		//取出底牌数据
+		last3Card = m_gameCtl->getSurplusCards().toCardList();
+		//给底牌窗口设置图片
+		for (int i = 0; i < last3Card.size(); ++i) {
+			QPixmap front = m_cardMap[last3Card[i]]->getFrontImage();
+			m_last3Card[i]->setImage(front, m_cardBackImg);
+			m_last3Card[i]->hide();
+		}
+		//叫地主
+		m_gameCtl->startLordCard();
 		break;
 	case GameControl::PLAYINGHAND:
 		break;
@@ -385,6 +398,25 @@ void gamePanel::updatePlayerCards(Player* player)
 			int topy = cardsRect.top() + (cardsRect.height() - (list.size() - 1) * cardSpace - panel->height()) / 2;
 			panel->move(leftx, topy + cardSpace * i);
 		}
+	}
+}
+
+void gamePanel::onPlayerStatusChanged(Player* player, GameControl::PlayerStatus status)
+{
+	switch (status)
+	{
+	case GameControl::THINKCALLLORD:
+		//玩家使用
+		if(player==m_gameCtl->getUserPlayer())
+			ui.buttonGroup->selectPanel(ButtonGroup::CALLLORD);
+
+		break;
+	case GameControl::THINKPLAYHAND:
+		break;
+	case GameControl::WINNING:
+		break;
+	default:
+		break;
 	}
 }
 
