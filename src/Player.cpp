@@ -114,6 +114,8 @@ void Player::grabLordBet(int point)
 void Player::storeDispatchCard(Card& card)
 {
 	m_cards.addCard(card);
+	Cards cs;
+	cs.addCard(card);
 }
 
 void Player::storeDispatchCards(Cards& cards)
