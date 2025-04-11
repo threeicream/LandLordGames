@@ -109,6 +109,7 @@ Player* Player::getNextPlayer() const
 
 void Player::grabLordBet(int point)
 {
+	notifyGrabLordBet(this, point);
 }
 
 void Player::storeDispatchCard(Card& card)
@@ -154,7 +155,7 @@ Cards Player::getPendCards() const
 	return m_pendCards;
 }
 
-void Player::prepareCallLord()
+void Player::prepareCallLord()//准备抢地主
 {
 }
 

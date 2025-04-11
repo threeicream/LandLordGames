@@ -5,6 +5,23 @@
 #include "UserPlayer.h"
 #include "Cards.h"
 
+struct BetRecord
+{
+	BetRecord() {
+		reset();
+	}
+
+	void reset() {//初始化
+		player = nullptr;
+		bet = 0;
+		times = 0;
+	}
+
+	Player* player;
+	int bet;
+	int times;//第几次叫地主
+};
+
 class GameControl : public QObject
 {
 	Q_OBJECT
@@ -50,12 +67,19 @@ public:
 	void becomeLord(Player* player);
 	//清空得分
 	void clearPlayerScore();
+	//得到玩家下注的最高分数
+	int getPlayerMaxBet();
 
+public slots:
 	//处理叫地主
-
+	void onGrabBet(Player* player, int bet);
 	//处理出牌
 signals:
 	void playerStatusChanged(Player* player, PlayerStatus status);
+	//通知玩家抢地主
+	void notifyGrabLordBet(Player* player, int bet, bool flag);
+	//游戏状态变化
+	void gameStatusChanged(GameStatus status);
 
 public:
 	GameControl(QObject *parent);
@@ -68,4 +92,5 @@ private:
 	Player* m_pendPlayer;
 	Cards m_pendCards;
 	Cards m_allCards;
+	BetRecord m_betRecord;
 };

@@ -55,6 +55,8 @@ public:
 public slots:
 	//处理玩家状态的变化
 	void onPlayerStatusChanged(Player* player, GameControl::PlayerStatus status);
+	//处理抢地主点数
+	void onGrabLordBet(Player* player, int bet, bool flag);
 
 protected:
 	virtual void paintEvent(QPaintEvent* event)override;

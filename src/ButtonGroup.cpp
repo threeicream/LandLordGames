@@ -47,7 +47,28 @@ void ButtonGroup::initButtons()
 	connect(ui.threeButton, &QPushButton::clicked, this, [=]() {emit betPoint(3); });
 }
 
-void ButtonGroup::selectPanel(Panel type)
+void ButtonGroup::selectPanel(Panel type ,int bet)
 {
 	ui.stackedWidget->setCurrentIndex(type);
+	if (type != Panel::CALLLORD) {
+		return;
+	}
+	if (bet == 0) {
+		ui.zeroButton->setVisible(true);
+		ui.oneButton->setVisible(true);
+		ui.twoButton->setVisible(true);
+		ui.threeButton->setVisible(true);
+	}
+	else if (bet == 1) {
+		ui.zeroButton->setVisible(true);
+		ui.oneButton->setVisible(false);
+		ui.twoButton->setVisible(true);
+		ui.threeButton->setVisible(true);
+	}
+	else if (bet == 2) {
+		ui.zeroButton->setVisible(true);
+		ui.oneButton->setVisible(false);
+		ui.twoButton->setVisible(false);
+		ui.threeButton->setVisible(true);
+	}
 }

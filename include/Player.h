@@ -64,6 +64,9 @@ public:
 	//虚函数
 	virtual void prepareCallLord();
 	virtual void preparePlayHand();
+signals:
+	//通知已经叫地主下注
+	void notifyGrabLordBet(Player* palyer, int bet);
 public:
 	Player(QObject* parent = nullptr);
 	Player(QString name,QObject* parent = nullptr);

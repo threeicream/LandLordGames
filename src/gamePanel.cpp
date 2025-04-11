@@ -57,6 +57,8 @@ void gamePanel::gameControlInit()
 	m_playerList.append(m_gameCtl->getUserPlayer());
 
 	connect(m_gameCtl, &GameControl::playerStatusChanged, this, &gamePanel::onPlayerStatusChanged);
+	connect(m_gameCtl, &GameControl::notifyGrabLordBet, this, &gamePanel::onGrabLordBet);
+	//connect(m_gameCtl, &GameControl::gameStatusChanged, this, &gamePanel::onGameStatusChanged);
 }
 
 void gamePanel::UpdateScorePanel()
@@ -124,7 +126,10 @@ void gamePanel::buttonGroupInit()
 		});
 	connect(ui.buttonGroup, &ButtonGroup::playHand, this, [=]() {});
 	connect(ui.buttonGroup, &ButtonGroup::pass, this, [=]() {});
-	connect(ui.buttonGroup, &ButtonGroup::betPoint, this, [=]() {});
+	connect(ui.buttonGroup, &ButtonGroup::betPoint, this, [=](int bet) {//玩家下注
+		m_gameCtl->getUserPlayer()->grabLordBet(bet);
+		
+		});
 }
 
 void gamePanel::PlayerContextInit()
@@ -408,8 +413,7 @@ void gamePanel::onPlayerStatusChanged(Player* player, GameControl::PlayerStatus 
 	case GameControl::THINKCALLLORD:
 		//玩家使用
 		if(player==m_gameCtl->getUserPlayer())
-			ui.buttonGroup->selectPanel(ButtonGroup::CALLLORD);
-
+			ui.buttonGroup->selectPanel(ButtonGroup::CALLLORD, m_gameCtl->getPlayerMaxBet());
 		break;
 	case GameControl::THINKPLAYHAND:
 		break;
@@ -418,6 +422,34 @@ void gamePanel::onPlayerStatusChanged(Player* player, GameControl::PlayerStatus 
 	default:
 		break;
 	}
+}
+
+void gamePanel::onGrabLordBet(Player* player, int bet, bool flag)
+{
+	//显示抢地主的信息提示
+	PlayerContext context = m_contextMap[player];
+	if (bet == 0) {
+		QPixmap pixmap;
+		pixmap.load(":/LordGame/image/buqinag.png");
+		context.info->setPixmap(pixmap);
+	}
+	else {
+		if (flag) {
+			QPixmap pixmap;
+			pixmap.load(":/LordGame/image/jiaodizhu.png");
+			context.info->setPixmap(pixmap);
+		}
+		else {
+			QPixmap pixmap;
+			pixmap.load(":/LordGame/image/qiangdizhu.png");
+			context.info->setPixmap(pixmap);
+		}
+	}
+	context.info->show();
+
+	//显示叫地主的分数
+
+	//播放分数的音乐
 }
 
 void gamePanel::paintEvent(QPaintEvent* event)
