@@ -58,7 +58,7 @@ void gamePanel::gameControlInit()
 
 	connect(m_gameCtl, &GameControl::playerStatusChanged, this, &gamePanel::onPlayerStatusChanged);
 	connect(m_gameCtl, &GameControl::notifyGrabLordBet, this, &gamePanel::onGrabLordBet);
-	//connect(m_gameCtl, &GameControl::gameStatusChanged, this, &gamePanel::onGameStatusChanged);
+	connect(m_gameCtl, &GameControl::gameStatusChanged, this, &gamePanel::gameStatusProcess);
 }
 
 void gamePanel::UpdateScorePanel()
