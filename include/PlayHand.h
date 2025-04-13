@@ -1,5 +1,6 @@
 #pragma once
 #include "Cards.h"
+#include <QVector>
 
 class PlayHand
 {
@@ -54,4 +55,9 @@ private:
 	HandType m_type;
 	Card::CardPoint m_pt;
 	int m_extra;
+	QVector<Card::CardPoint>m_oneCard;
+	QVector<Card::CardPoint>m_twoCard;
+	QVector<Card::CardPoint>m_threeCard;
+	QVector<Card::CardPoint>m_fourCard;
+
 };

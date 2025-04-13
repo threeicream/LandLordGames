@@ -2,6 +2,36 @@
 
 void PlayHand::classify(Cards& cards)
 {
+	QVector<Card> list = cards.toCardList(Cards::ASC);
+	int cardRecord[Card::Card_End];
+	memset(cardRecord, 0, sizeof(int) * Card::Card_End);//将内存区域设置为 0
+	for (int i = 0; i < list.size(); ++i) {//相当于计数排序的方法
+		Card c = list[i];
+		++cardRecord[c.getPoint()];
+	}
+	m_oneCard.clear();
+	m_twoCard.clear();
+	m_threeCard.clear();
+	m_fourCard.clear();
+	for (int i = 0; i < Card::Card_End; ++i) {
+		switch (cardRecord[i])
+		{
+		case 1:
+			m_oneCard.append(static_cast<Card::CardPoint>(i));
+			break;
+		case 2:
+			m_twoCard.append(static_cast<Card::CardPoint>(i));
+			break;
+		case 3:
+			m_threeCard.append(static_cast<Card::CardPoint>(i));
+			break;
+		case 4:
+			m_fourCard.append(static_cast<Card::CardPoint>(i));
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void PlayHand::judgeCardType()
