@@ -36,9 +36,12 @@ public:
 	};
 public:
 	//得到牌型的属性信息
-	PlayHand::HandType getType();
+	PlayHand::HandType getType()const;
 	Card::CardPoint getPt();
 	int getExtra();
+
+	//比较自己的牌和其他人的牌的牌型大小
+	bool canBeat(const PlayHand& other)const;
 private:
 	//1.对扑克牌进行分类：1张的，2张，3张，4张有多少种组合
 	void classify(Cards& cards);
@@ -47,6 +50,7 @@ private:
 	void judgeCardType();
 
 	//判断牌的类型
+	bool isPass();//放弃
 	bool isSingle();//单
 	bool isPair();//对
 	bool isTriple();//三个

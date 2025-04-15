@@ -40,6 +40,9 @@ void PlayHand::judgeCardType()
 	m_pt = Card::Card_Begin;
 	m_extra = 0;
 
+	if (isPass())
+		m_type == Hand_Pass;
+
 	// 按照优先级顺序判断牌型
 	if (isBombJokersTwoSingle()) {
 		m_type = Hand_Bomb_Jokers_Two_Single;
@@ -117,7 +120,7 @@ void PlayHand::judgeCardType()
 	}
 }
 
-PlayHand::HandType PlayHand::getType()
+PlayHand::HandType PlayHand::getType()const
 {
 	return m_type;
 }
@@ -130,6 +133,34 @@ Card::CardPoint PlayHand::getPt()
 int PlayHand::getExtra()
 {
 	return m_extra;
+}
+
+bool PlayHand::canBeat(const PlayHand& other)const
+{
+	if (m_type == Hand_Unknown)
+		return false;
+	if (other.m_type == Hand_Pass) {
+		return true;
+	}
+	if (m_type == Hand_Bomb_Jokers)
+		return true;
+	if (m_type == Hand_Bomb && other.m_type >= Hand_Single && other.m_type <= Hand_Hand_Seq_Single) {
+		return true;
+	}
+	//双方牌型一致
+	if (m_type == other.m_type && m_extra == other.m_extra) {
+			return m_pt > other.m_pt;
+	}
+	return false;
+
+}
+
+bool PlayHand::isPass()
+{
+	if (m_oneCard.isEmpty() && m_twoCard.isEmpty() && m_threeCard.isEmpty() && m_fourCard.isEmpty()) {
+		return true;
+	}
+	return false;
 }
 
 bool PlayHand::isSingle()
