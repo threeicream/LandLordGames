@@ -39,9 +39,11 @@ void Cards::delCard(const Cards& cards)
 	m_cards.subtract(cards.m_cards);
 }
 
-void Cards::delCard(const QVector<Cards>* cards)
+void Cards::delCard(const QVector<Cards>& cards)
 {
-
+	for (auto it : cards) {
+		delCard(it);
+	}
 }
 
 int Cards::cardCount()

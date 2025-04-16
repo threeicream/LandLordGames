@@ -20,7 +20,7 @@ public:
 	//删除扑克牌
 	void delCard(const Card& card);
 	void delCard(const Cards& cards);
-	void delCard(const QVector<Cards>* cards);
+	void delCard(const QVector<Cards>& cards);
 
 	//扑克牌的数量
 	int cardCount();

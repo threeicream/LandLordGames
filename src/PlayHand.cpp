@@ -41,7 +41,7 @@ void PlayHand::judgeCardType()
 	m_extra = 0;
 
 	if (isPass())
-		m_type == Hand_Pass;
+		m_type = Hand_Pass;
 
 	// 按照优先级顺序判断牌型
 	if (isBombJokersTwoSingle()) {
@@ -74,12 +74,12 @@ void PlayHand::judgeCardType()
 		m_pt = m_fourCard.first();//记录炸弹的大小
 	}
 	else if (isHandSeqSingle()) {
-		m_type = Hand_Hand_Seq_Single;
+		m_type = Hand_Seq_Single;
 		m_pt = m_oneCard.first();//记录最小的点数
 		m_extra = m_oneCard.size();//记录顺子的长度
 	}
 	else if (isHandSeqPair()) {
-		m_type = Hand_Hand_Seq_Pair;
+		m_type = Hand_Seq_Pair;
 		m_pt = m_twoCard.first();//记录最小的点数
 		m_extra = m_twoCard.size();//记录连对的长度
 	}
@@ -144,7 +144,7 @@ bool PlayHand::canBeat(const PlayHand& other)const
 	}
 	if (m_type == Hand_Bomb_Jokers)
 		return true;
-	if (m_type == Hand_Bomb && other.m_type >= Hand_Single && other.m_type <= Hand_Hand_Seq_Single) {
+	if (m_type == Hand_Bomb && other.m_type >= Hand_Single && other.m_type <= Hand_Seq_Single) {
 		return true;
 	}
 	//双方牌型一致
