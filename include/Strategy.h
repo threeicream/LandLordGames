@@ -11,8 +11,10 @@ public:
 	Cards firstPlay();
 	// 3. 得到比指定牌型大的牌
 	Cards getGreaterCards(PlayHand type);
+	Cards getGreaterCards_api(PlayHand type);
 	// 4. 能大过指定的牌时， 判断是出牌还是放行， 返回true->出牌， 返回false- >放行
 	bool whetherToBeat(Cards& card);
+	bool whetherToBeat_api(Cards& card);
 	// 5.  找出指定数量（count ）的相同点数的牌（point）， 找出 count张点数为point的牌
 	Cards findSamePointCards(Card::CardPoint point, int count);
 	// 6. 找出所有点数数量为count的牌 ==> 得到一个多张扑克牌数组
@@ -21,7 +23,8 @@ public:
 	QVector<Cards> findRangeCards(Card::CardPoint begin, Card::CardPoint end);
 	// 8. 按牌型找牌， 并且指定要找的牌是否要大过指定的牌型
 	QVector<Cards> findCardType(PlayHand hand, bool beat);
-
+	//9. 从指定的cards对象中挑选满足条件的顺子
+	void pickSeqSingles(QVector< QVector<Cards>>& allSeqRecord, QVector<Cards>& seqSingle, const Cards& cards);
 public:
 	Strategy(Player* player, const Cards& cards);
 	~Strategy();

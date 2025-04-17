@@ -29,6 +29,48 @@ Cards Strategy::firstPlay()
 
 Cards Strategy::getGreaterCards(PlayHand type)
 {
+	//1.出牌玩家和当前玩家阵营不一致
+	Player* penPlayer = m_player->getPendPlayer();
+	if (penPlayer->getRole() != m_player->getRole() && penPlayer->getCards().cardCount() <= 3) {
+		QVector<Cards>bombs = findCardsByCount(4);
+		for (int i = 0; i < bombs.size(); ++i) {
+			PlayHand hand(bombs[i]);
+			if (hand.canBeat(type)) {
+				return bombs[i];
+			}
+		}
+	}
+	//2.下一个玩家和当前玩家阵营不一致
+	Player* nextPlayer = m_player->getNextPlayer();
+	//将玩家手中的顺子剔除出去
+	Cards remain = m_cards;
+	//remain.delCard("shunzi");
+
+	QVector<Cards>beatCardsArray = Strategy(m_player, remain).findCardType(type, true);
+	if (!beatCardsArray.isEmpty()) {
+		if (nextPlayer->getRole() != m_player->getRole() && nextPlayer->getCards().cardCount() <= 2) {
+			return beatCardsArray.back();
+		}
+		else {
+			return beatCardsArray.front();
+		}
+	}
+	else {
+		QVector<Cards>beatCardsArray1 = Strategy(m_player, m_cards).findCardType(type, true);
+		if (!beatCardsArray1.isEmpty()) {
+			if (nextPlayer->getRole() != m_player->getRole() && nextPlayer->getCards().cardCount() <= 2) {
+				return beatCardsArray1.back();
+			}
+			else {
+				return beatCardsArray1.front();
+			}
+		}
+	}
+	return Cards();
+}
+
+Cards Strategy::getGreaterCards_api(PlayHand type)
+{
 	return Cards();
 }
 
@@ -60,12 +102,13 @@ bool Strategy::whetherToBeat(Cards& card)
 				&& pendPlayer->getCards().cardCount() >= 10 && m_player->getCards().cardCount() >= 5)
 				return false;
 		}
-
-		return true;
 	}
-	else {
+	return true;
+}
 
-	}
+bool Strategy::whetherToBeat_api(Cards& card)
+{
+	return false;
 }
 
 Cards Strategy::findSamePointCards(Card::CardPoint point, int count)
@@ -189,6 +232,36 @@ QVector<Cards> Strategy::findCardType(PlayHand hand, bool beat)
 	}
 }
 
+void Strategy::pickSeqSingles(QVector< QVector<Cards>>& allSeqRecord , QVector<Cards>& seqSingle, const Cards& cards)
+{
+	//1.得到所有的顺子组合
+	QVector<Cards> allSeq = Strategy(m_player, cards).findCardType(PlayHand(PlayHand::Hand_Single, Card::Card_Begin, 0), false);
+	if (allSeq.isEmpty()) {
+		//递归结束条件，将满足条件的顺子传递给调用者
+		allSeqRecord << seqSingle;
+	}
+	else {//2.对顺子进行筛选
+		//遍历得到的所有顺子
+		for (int i = 0; i < allSeq.size(); ++i) {
+			Cards saveCards = cards;
+			//将顺子取出
+			Cards aScheme = allSeq[i];
+			//将顺子从用户手中删除
+			Cards temp = saveCards;
+			temp.delCard(aScheme);
+
+			QVector<Cards> seqArray = seqSingle;
+			seqArray << aScheme;
+			//检测还有没有其他顺子
+			//seqArray储存一轮for循环中多轮递归得到的可用的顺子
+			//allSeqRecord储存多轮for循环中多轮递归得到的可用的顺子
+			pickSeqSingles(allSeqRecord, seqArray, temp);//递归
+		}
+	}
+	
+
+}
+
 Strategy::Strategy(Player* player, const Cards& cards)
 {
 	m_player = player;
@@ -203,9 +276,11 @@ QVector<Cards> Strategy::getCards(Card::CardPoint point, int number)
 {
 	QVector<Cards>findCardsArray;
 	for (Card::CardPoint pt = point; pt < Card::Card_End; pt = static_cast<Card::CardPoint>(pt + 1)) {
-		Cards cs = findSamePointCards(pt, number);
-		if (!cs.isEmpty())
+		//目的是尽量不拆分其他的牌型
+		if (m_cards.pointCount(pt) == number) {
+			Cards cs = findSamePointCards(pt, number);
 			findCardsArray << cs;
+		}
 	}
 	return findCardsArray;
 }
