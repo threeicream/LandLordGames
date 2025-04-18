@@ -1,4 +1,5 @@
 #include "Strategy.h"
+#include <QMap>
 
 Cards Strategy::makeStrategy()
 {
@@ -44,6 +45,7 @@ Cards Strategy::getGreaterCards(PlayHand type)
 	Player* nextPlayer = m_player->getNextPlayer();
 	//将玩家手中的顺子剔除出去
 	Cards remain = m_cards;
+
 	//remain.delCard("shunzi");
 
 	QVector<Cards>beatCardsArray = Strategy(m_player, remain).findCardType(type, true);
@@ -260,6 +262,56 @@ void Strategy::pickSeqSingles(QVector< QVector<Cards>>& allSeqRecord , QVector<C
 	}
 	
 
+}
+
+QVector<Cards> Strategy::pickOptimalSeqSingle()
+{
+	QVector<QVector<Cards>>seqRecord;
+	QVector<Cards>seqSingles;
+	Strategy(m_player, m_cards).pickSeqSingles(seqRecord, seqSingles, m_cards);
+
+	if (seqRecord.isEmpty())
+		return QVector<Cards>();
+
+	
+	QMap<int, int>seqMarks;
+	int minSeq = 0;
+	int minCount = INT_MAX;
+	for (int i = 0; i < seqRecord.size(); ++i) {
+		Cards temp = m_cards;
+		temp.delCard(seqRecord[i]);
+
+		//判断剩下的单牌数量
+		QVector<Cards> singleArray = Strategy(m_player, temp).findCardsByCount(1);
+
+		CardLsit list;//单牌容器
+		for (int j = 0; j < singleArray.size(); ++j) {
+			list << singleArray[j].toCardList();
+		}
+		//找点数相对较大的顺子
+		int mark = 0;
+		for (int k = 0; k < list.size(); ++k) {
+			mark += list[k].getPoint() + 15;//15是基准数，为了避免特殊情况 3，7||k
+		}
+		//seqMarks[i] = mark;
+		if (minCount > mark) {
+			minCount = mark;
+			minSeq = i;
+		}
+	}
+	
+	/*//遍历map？真的需要用map吗？
+	int comMark = INT_MAX;
+	int value = 0;
+	auto it = seqMarks.constBegin();
+	for (; it != seqMarks.constEnd(); ++it) {
+		if (it.value() < comMark) {
+			comMark = it.value();
+			value = it.key();
+		}
+	}*/
+
+	return seqRecord[minSeq];
 }
 
 Strategy::Strategy(Player* player, const Cards& cards)
