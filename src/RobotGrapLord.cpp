@@ -1,5 +1,6 @@
 #include "RobotGrapLord.h"
 #include "Robot.h"
+#include <QTimer>
 
 void RobotGrapLord::run()
 {
@@ -18,3 +19,19 @@ RobotGrapLord::RobotGrapLord(Robot* player , QObject* parent)
 RobotGrapLord::~RobotGrapLord()
 {
 }
+
+//void robotGrapLord::work()
+//{
+//	//考虑叫地主
+//	QTimer::singleShot(2000, []() {});
+//	m_player->thinkCallLorad();
+//}
+//
+//robotGrapLord::robotGrapLord(Robot* player, QObject* parent)
+//{
+//	m_player = player;
+//}
+//
+//robotGrapLord::~robotGrapLord()
+//{
+//}

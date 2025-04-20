@@ -2,6 +2,7 @@
 
 #include "Player.h"
 #include <QObject>
+class QThread;
 
 class Robot : public Player
 {
@@ -16,4 +17,8 @@ public:
 	using Player::Player;//继承基类构造函数
 	Robot(QObject* parent = nullptr);
 	~Robot();
+private:
+	void onDelThread();
+private:
+	QThread* Worker1 = nullptr;
 };

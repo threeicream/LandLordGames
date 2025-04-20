@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QThread>
+#include <QObject>
 class Robot;
 
 class RobotGrapLord : public QThread
@@ -14,3 +15,15 @@ public:
 private:
 	Robot* m_player;
 };
+
+//class robotGrapLord : public QObject
+//{
+//	Q_OBJECT
+//public:
+//	void work();
+//public:
+//	robotGrapLord(Robot* player, QObject* parent = nullptr);
+//	~robotGrapLord();
+//private:
+//	Robot* m_player;
+//};

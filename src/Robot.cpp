@@ -1,12 +1,21 @@
 #include "Robot.h"
 #include "Strategy.h"
 #include "RobotGrapLord.h"
+#include <QThread>
 
 void Robot::prepareCallLord()
 {
 	//创建线程类
 	RobotGrapLord* subThread = new RobotGrapLord(this);
 	subThread->start();
+
+	//Worker1 = new QThread(); // 在函数内部创建
+	//this->moveToThread(Worker1);
+	//connect(Worker1, &QThread::started, this, &Robot::thinkCallLorad);
+	//connect(Worker1, &QThread::finished, this, &Robot::onDelThread); // 确保线程结束时释放内存
+	//connect(Worker1, &QThread::finished, Worker1, &QThread::deleteLater); // 确保线程结束时释放内存
+
+	//Worker1->start();
 }
 
 void Robot::preparePlayHand()
@@ -72,4 +81,15 @@ Robot::Robot(QObject *parent)
 
 Robot::~Robot()
 {
+	
+}
+
+void Robot::onDelThread()
+{
+	if (Worker1) { // 检查 Worker1 是否为 nullptr
+		if (Worker1->isRunning()) {
+			Worker1->quit();
+			Worker1->wait();
+		}
+	}
 }
