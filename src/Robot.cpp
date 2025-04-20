@@ -28,9 +28,9 @@ void Robot::thinkCallLorad()
 	weight += st.findRangeCards(Card::Card_SJ, Card::Card_BJ).cardCount() * 6;
 
 	QVector<Cards> optSeq = st.pickOptimalSeqSingle();
-	//for (auto& it : optSeq) {
-	//	it.getAllCardsPoint();
-	//}
+	for (auto& it : optSeq) {//测试
+		it.getAllCardsPoint();
+	}
 	weight += optSeq.size() * 5;
 
 	QVector<Cards> bombs = st.findCardsByCount(4);
@@ -40,7 +40,7 @@ void Robot::thinkCallLorad()
 	Cards tmp = m_cards;
 	tmp.delCard(optSeq);
 	tmp.delCard(bombs);
-	Cards card2 = st.findRangeCards(Card::Card_2,Card::Card_SJ);
+	Cards card2 = st.findRangeCards(Card::Card_2,Card::Card_2);
 	tmp.delCard(card2);
 
 	QVector<Cards> triples = Strategy(this, tmp).findCardsByCount(3);

@@ -321,7 +321,7 @@ QVector<Cards> Strategy::findCardsByCount(int count)
 Cards Strategy::findRangeCards(Card::CardPoint begin, Card::CardPoint end)
 {
 	Cards rangeCards;
-	for (Card::CardPoint point = begin; point < end; point = static_cast<Card::CardPoint>(point + 1)) {
+	for (Card::CardPoint point = begin; point <= end; point = static_cast<Card::CardPoint>(point + 1)) {
 		int count = m_cards.pointCount(point);
 		Cards cs = findSamePointCards(point, count);
 		rangeCards << cs;
