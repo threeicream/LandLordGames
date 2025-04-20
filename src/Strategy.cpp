@@ -318,9 +318,9 @@ QVector<Cards> Strategy::findCardsByCount(int count)
 	return cardsArray;
 }
 
-QVector<Cards> Strategy::findRangeCards(Card::CardPoint begin, Card::CardPoint end)
+Cards Strategy::findRangeCards(Card::CardPoint begin, Card::CardPoint end)
 {
-	QVector<Cards> rangeCards;
+	Cards rangeCards;
 	for (Card::CardPoint point = begin; point < end; point = static_cast<Card::CardPoint>(point + 1)) {
 		int count = m_cards.pointCount(point);
 		Cards cs = findSamePointCards(point, count);
@@ -390,15 +390,18 @@ QVector<Cards> Strategy::findCardType(PlayHand hand, bool beat)
 void Strategy::pickSeqSingles(QVector< QVector<Cards>>& allSeqRecord , QVector<Cards>& seqSingle, const Cards& cards)
 {
 	//1.得到所有的顺子组合
-	QVector<Cards> allSeq = Strategy(m_player, cards).findCardType(PlayHand(PlayHand::Hand_Single, Card::Card_Begin, 0), false);
+	QVector<Cards> allSeq = Strategy(m_player, cards).findCardType(PlayHand(PlayHand::Hand_Seq_Single, Card::Card_Begin, 0), false);
+	//for (auto& it : allSeq) {//测试用
+	//	it.getAllCardsPoint();
+	//}
 	if (allSeq.isEmpty()) {
 		//递归结束条件，将满足条件的顺子传递给调用者
 		allSeqRecord << seqSingle;
 	}
 	else {//2.对顺子进行筛选
 		//遍历得到的所有顺子
+		Cards saveCards = cards;
 		for (int i = 0; i < allSeq.size(); ++i) {
-			Cards saveCards = cards;
 			//将顺子取出
 			Cards aScheme = allSeq[i];
 			//将顺子从用户手中删除
@@ -421,11 +424,11 @@ QVector<Cards> Strategy::pickOptimalSeqSingle()
 {
 	QVector<QVector<Cards>>seqRecord;
 	QVector<Cards>seqSingles;
-	Cards temp = m_cards;
+	Cards save = m_cards;
 	//避免删除炸弹和三带
-	temp.delCard(findCardsByCount(4));
-	temp.delCard(findCardsByCount(3));
-	pickSeqSingles(seqRecord, seqSingles, temp);
+	save.delCard(findCardsByCount(4));
+	save.delCard(findCardsByCount(3));
+	pickSeqSingles(seqRecord, seqSingles, save);
 
 	if (seqRecord.isEmpty())
 		return QVector<Cards>();
@@ -638,7 +641,7 @@ Cards Strategy::getBaseSeqSingle(Card::CardPoint point)
 	Cards card3 = findSamePointCards(static_cast<Card::CardPoint>(point + 3), 1);
 	Cards card4 = findSamePointCards(static_cast<Card::CardPoint>(point + 4), 1);
 	Cards baseSeq;
-	if (!card0.isEmpty() || !card1.isEmpty() || !card2.isEmpty() || !card3.isEmpty() || !card4.isEmpty())
+	if (!card0.isEmpty() && !card1.isEmpty() && !card2.isEmpty() && !card3.isEmpty() && !card4.isEmpty())
 		baseSeq << card0 << card1 << card2 << card3 << card4;
 	return baseSeq;
 }
@@ -646,7 +649,7 @@ Cards Strategy::getBaseSeqSingle(Card::CardPoint point)
 QVector<Cards> Strategy::getBomb(Card::CardPoint begin)
 {
 	QVector<Cards>findcardsArray;
-	for (Card::CardPoint point = Card::Card_3; point < Card::Card_End; point = static_cast<Card::CardPoint>(point + 1)) {
+	for (Card::CardPoint point = begin; point < Card::Card_End; point = static_cast<Card::CardPoint>(point + 1)) {
 		Cards cs = findSamePointCards(point, 4);
 		if (!cs.isEmpty()) {
 			findcardsArray << cs;

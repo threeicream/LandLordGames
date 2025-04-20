@@ -1,11 +1,67 @@
 #include "Robot.h"
+#include "Strategy.h"
+#include "RobotGrapLord.h"
 
 void Robot::prepareCallLord()
 {
+	//创建线程类
+	RobotGrapLord* subThread = new RobotGrapLord(this);
+	subThread->start();
 }
 
 void Robot::preparePlayHand()
 {
+}
+
+void Robot::thinkCallLorad()
+{
+	/*
+	基于手牌计算权重
+	1.大小王：6
+	2.顺子/炸弹：5
+	3.三张点数相同的牌：4
+	4.2：3
+	5.对牌：1
+	*/
+	int weight = 0;
+	Strategy st(this, m_cards);
+	weight += st.findRangeCards(Card::Card_SJ, Card::Card_BJ).cardCount() * 6;
+
+	QVector<Cards> optSeq = st.pickOptimalSeqSingle();
+	//for (auto& it : optSeq) {
+	//	it.getAllCardsPoint();
+	//}
+	weight += optSeq.size() * 5;
+
+	QVector<Cards> bombs = st.findCardsByCount(4);
+	weight += bombs.size() * 5;
+
+	weight += m_cards.pointCount(Card::Card_2) * 3;
+	Cards tmp = m_cards;
+	tmp.delCard(optSeq);
+	tmp.delCard(bombs);
+	Cards card2 = st.findRangeCards(Card::Card_2,Card::Card_SJ);
+	tmp.delCard(card2);
+
+	QVector<Cards> triples = Strategy(this, tmp).findCardsByCount(3);
+	weight += triples.size() * 4;
+
+	tmp.delCard(triples);
+	QVector<Cards> pairs = Strategy(this, tmp).findCardsByCount(2);
+	weight += pairs.size() * 1;
+
+	//计算分数
+	if (weight >= 22) {
+		grabLordBet(3);
+	}
+	else if (weight >= 18) {
+		grabLordBet(2);
+	}
+	else if (weight >= 10) {
+		grabLordBet(1);
+	}
+	else
+		grabLordBet(0);
 }
 
 Robot::Robot(QObject *parent)

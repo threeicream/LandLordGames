@@ -45,6 +45,9 @@ public:
 	//排序
 	CardLsit toCardList(Cards::SortType type = DESC);
 
+	//测试，输出cards的卡牌点数
+	void getAllCardsPoint();
+
 public:
 	Cards();
 	explicit Cards(const Card& card);

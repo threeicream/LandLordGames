@@ -1,7 +1,7 @@
 #include "Cards.h"
 #include <QRandomGenerator>
 #include <algorithm>
-
+#include <QDebug>
 
 void Cards::addCard(const Card& card)
 {
@@ -133,6 +133,15 @@ CardLsit Cards::toCardList(Cards::SortType type)
 		std::sort(res.begin(), res.end(), greatorSort);
 	}
 	return res;
+}
+
+void Cards::getAllCardsPoint()
+{
+	CardLsit res = toCardList();
+	for (auto& it : res) {
+		qDebug() << it.getPoint();
+	}
+	qDebug() <<" ";
 }
 
 Cards::Cards()

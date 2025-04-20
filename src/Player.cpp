@@ -109,7 +109,7 @@ Player* Player::getNextPlayer() const
 
 void Player::grabLordBet(int point)
 {
-	notifyGrabLordBet(this, point);
+	emit notifyGrabLordBet(this, point);
 }
 
 void Player::storeDispatchCard(Card& card)

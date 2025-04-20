@@ -9,8 +9,11 @@ class Robot : public Player
 public:
 	virtual void prepareCallLord() override;
 	virtual void preparePlayHand() override;
+
+	//考虑叫地主
+	void thinkCallLorad();
 public:
-	using Player::Player;
+	using Player::Player;//继承基类构造函数
 	Robot(QObject* parent = nullptr);
 	~Robot();
 };

@@ -20,7 +20,7 @@ public:
 	// 6. 找出所有点数数量为count的牌 ==> 得到一个多张扑克牌数组
 	QVector<Cards> findCardsByCount(int count);
 	// 7. 根据点数范围找牌
-	QVector<Cards> findRangeCards(Card::CardPoint begin, Card::CardPoint end);
+	Cards findRangeCards(Card::CardPoint begin, Card::CardPoint end);
 	// 8. 按牌型找牌， 并且指定要找的牌是否要大过指定的牌型
 	QVector<Cards> findCardType(PlayHand hand, bool beat);
 	//9. 从指定的cards对象中挑选满足条件的顺子
