@@ -14,6 +14,7 @@ class Player;
 class CardPanel;
 class QLabel;
 class QTimer;
+class AnimationWindow;
 
 class gamePanel : public QWidget
 {
@@ -21,6 +22,7 @@ class gamePanel : public QWidget
 
 public:
 	enum CardAlign { HOR, VER };
+	enum AnimationType { SHUNZI, LIANDUI, PLANE, JOKERBOMB, BOMB, BET };
 	gamePanel(QWidget* parent = nullptr);
 	~gamePanel();
 
@@ -51,6 +53,9 @@ public:
 	void disposCard(Player* player,Cards& cards);
 	//更新扑克牌在窗口的显示
 	void updatePlayerCards(Player* player);
+
+	//显示特效动画
+	void showAnimation(AnimationType type, int bet = 0);
 
 public slots:
 	//处理玩家状态的变化
@@ -100,4 +105,5 @@ private:
 	QPoint m_baseCardPos;
 	GameControl::GameStatus m_gameStatus;
 	QTimer* m_timer;
+	AnimationWindow* m_animation;
 };

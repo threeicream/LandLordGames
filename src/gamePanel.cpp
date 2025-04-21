@@ -11,6 +11,7 @@
 #include <QLabel>
 #include <QTimer>
 #include <QPropertyAnimation>
+#include "AnimationWindow.h"
 
 gamePanel::gamePanel(QWidget *parent)
 	: QWidget(parent)
@@ -41,6 +42,9 @@ gamePanel::gamePanel(QWidget *parent)
 	//9.定时器实例化
 	m_timer = new QTimer(this);
 	connect(m_timer, &QTimer::timeout, this, &gamePanel::onDispatchCard);
+
+	m_animation = new AnimationWindow(this);
+
 }
 
 gamePanel::~gamePanel()
@@ -128,7 +132,7 @@ void gamePanel::buttonGroupInit()
 	connect(ui.buttonGroup, &ButtonGroup::pass, this, [=]() {});
 	connect(ui.buttonGroup, &ButtonGroup::betPoint, this, [=](int bet) {//玩家下注
 		m_gameCtl->getUserPlayer()->grabLordBet(bet);
-		
+		ui.buttonGroup->selectPanel(ButtonGroup::EMPTY);
 		});
 }
 
@@ -201,7 +205,7 @@ void gamePanel::GameSceneInit()
 	}
 	//卡牌的位置
 	m_baseCardPos = QPoint((width() - m_cardSize.width()) / 2,
-						   (height() - m_cardSize.height()) / 2 - 100);
+						   height() / 2 - 100);
 	m_baseCard->move(m_baseCardPos);
 	m_moveCard->move(m_baseCardPos);
 
@@ -406,6 +410,31 @@ void gamePanel::updatePlayerCards(Player* player)
 	}
 }
 
+void gamePanel::showAnimation(AnimationType type, int bet)
+{
+	switch (type)
+	{
+	case gamePanel::SHUNZI:
+		break;
+	case gamePanel::LIANDUI:
+		break;
+	case gamePanel::PLANE:
+		break;
+	case gamePanel::JOKERBOMB:
+		break;
+	case gamePanel::BOMB:
+		break;
+	case gamePanel::BET:
+		m_animation->setFixedSize(160, 98);
+		m_animation->move((width() - m_animation->width()) / 2, (height() - m_animation->height()) / 2 - 140);
+		m_animation->showBetScore(bet);
+		break;
+	default:
+		break;
+	}
+	m_animation->show();
+}
+
 void gamePanel::onPlayerStatusChanged(Player* player, GameControl::PlayerStatus status)
 {
 	switch (status)
@@ -448,7 +477,7 @@ void gamePanel::onGrabLordBet(Player* player, int bet, bool flag)
 	context.info->show();
 
 	//显示叫地主的分数
-
+	showAnimation(gamePanel::BET, bet);
 	//播放分数的音乐
 }
 
