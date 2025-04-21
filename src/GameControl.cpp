@@ -144,6 +144,10 @@ int GameControl::getPlayerMaxBet()
 	return m_betRecord.bet;
 }
 
+void GameControl::onPlayHand(Player* player, Cards& cards)
+{
+}
+
 void GameControl::onGrabBet(Player* player, int bet)
 {
 	//1.通知主窗口 玩家叫地主了（更新信息提示）

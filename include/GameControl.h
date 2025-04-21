@@ -74,6 +74,7 @@ public slots:
 	//处理叫地主
 	void onGrabBet(Player* player, int bet);
 	//处理出牌
+	void onPlayHand(Player* player, Cards& cards);
 signals:
 	void playerStatusChanged(Player* player, PlayerStatus status);
 	//通知玩家抢地主

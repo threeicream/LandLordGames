@@ -1,7 +1,9 @@
 #include "Robot.h"
 #include "Strategy.h"
 #include "RobotGrapLord.h"
+#include "RobotPlayHand.h"
 #include <QThread>
+#include "Strategy.h"
 
 void Robot::prepareCallLord()
 {
@@ -38,6 +40,19 @@ void Robot::prepareCallLord()
 
 void Robot::preparePlayHand()
 {
+	//创建线程类
+	RobotPlayHand* subThread = new RobotPlayHand(this);
+	subThread->start();
+
+	connect(subThread, &RobotPlayHand::finished, subThread, &RobotPlayHand::deleteLater);
+	connect(subThread, &RobotPlayHand::finished, this, [=]() {//使用=和lambda表达式不是很安全
+		if (subThread) { // 检查 Worker1 是否为 nullptr
+			if (subThread->isRunning()) {
+				subThread->quit();
+				subThread->wait();
+			}
+		}
+		});
 }
 
 void Robot::thinkCallLorad()
@@ -89,6 +104,13 @@ void Robot::thinkCallLorad()
 	}
 	else
 		grabLordBet(0);
+}
+
+void Robot::thinkPlayHand()
+{
+	Strategy st(this, m_cards);
+	Cards cs = st.makeStrategy();
+	playHand(cs);
 }
 
 Robot::Robot(QObject *parent)

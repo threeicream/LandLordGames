@@ -137,6 +137,7 @@ void Player::clearCards()
 void Player::playHand(Cards& cards)
 {
 	m_cards.delCard(cards);
+	emit notifyPlayHand(this, cards);
 }
 
 void Player::setPendingInfo(Player* player, const Cards& cards)

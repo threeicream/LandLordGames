@@ -13,6 +13,9 @@ public:
 
 	//考虑叫地主
 	void thinkCallLorad();
+
+	//考虑叫地主
+	void thinkPlayHand();
 public:
 	using Player::Player;//继承基类构造函数
 	Robot(QObject* parent = nullptr);

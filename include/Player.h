@@ -67,6 +67,8 @@ public:
 signals:
 	//通知已经叫地主下注
 	void notifyGrabLordBet(Player* palyer, int bet);
+	//通知已经出牌
+	void notifyPlayHand(Player* player, Cards& cards);
 public:
 	Player(QObject* parent = nullptr);
 	Player(QString name,QObject* parent = nullptr);
