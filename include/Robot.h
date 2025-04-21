@@ -18,7 +18,5 @@ public:
 	Robot(QObject* parent = nullptr);
 	~Robot();
 private:
-	void onDelThread();
-private:
-	QThread* Worker1 = nullptr;
+
 };
