@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QThread>
+#include "Robot.h"
 
 class RobotPlayHand : public QThread
 {

@@ -1,6 +1,7 @@
 #include "GameControl.h"
 #include <QRandomGenerator>
 #include <QTimer>
+#include "PlayHand.h"
 
 void GameControl::playerInit()
 {
@@ -34,6 +35,17 @@ void GameControl::playerInit()
 	connect(m_user, &UserPlayer::notifyGrabLordBet, this, &GameControl::onGrabBet);
 	connect(m_robotLeft, &UserPlayer::notifyGrabLordBet, this, &GameControl::onGrabBet);
 	connect(m_robotRight, &UserPlayer::notifyGrabLordBet, this, &GameControl::onGrabBet);
+
+	//传递出牌玩家和打出的牌
+	connect(this, &GameControl::pendingInfo, m_robotLeft, &Robot::storePendingInfo);
+	connect(this, &GameControl::pendingInfo, m_robotRight, &Robot::storePendingInfo);
+	connect(this, &GameControl::pendingInfo, m_user, &UserPlayer::storePendingInfo);
+
+	//处理玩家出牌
+	connect(m_robotLeft, &Robot::notifyPlayHand, this, &GameControl::onPlayHand);
+	connect(m_robotRight, &Robot::notifyPlayHand, this, &GameControl::onPlayHand);
+	connect(m_user, &Robot::notifyPlayHand, this, &GameControl::onPlayHand);
+
 }
 
 Robot* GameControl::getLeftRobot()const
@@ -114,13 +126,14 @@ void GameControl::startLordCard()
 	emit playerStatusChanged(m_currPlayer, PlayerStatus::THINKCALLLORD);
 }
 
-void GameControl::becomeLord(Player* player)
+void GameControl::becomeLord(Player* player, int bet)
 {
 	player->setRole(Player::LANDLORD);
 	player->getPrevPlayer()->setRole(Player::FARMER);
 	player->getNextPlayer()->setRole(Player::FARMER);
 
 	m_currPlayer = player;
+	m_curBet = bet;
 	player->storeDispatchCards(m_allCards);//三张底牌给地主
 
 	QTimer::singleShot(1000, this, [=]() {
@@ -146,6 +159,58 @@ int GameControl::getPlayerMaxBet()
 
 void GameControl::onPlayHand(Player* player, Cards& cards)
 {
+	//1.将玩家出牌的信号转发主界面
+	emit notifyPlayHand(player, cards);
+	//2.如果不是空牌，给其他玩家发送信号，使其保存出牌玩家和打出的牌
+	if (!cards.isEmpty()) {
+		m_pendCards = cards;
+		m_pendPlayer = player;
+		emit pendingInfo(player, cards);
+	}
+	//如果有炸弹，翻倍底分
+	PlayHand::HandType type = PlayHand(cards).getType();
+	if (type == PlayHand::Hand_Bomb || type == PlayHand::Hand_Bomb_Jokers) {
+		m_curBet *= 2;
+	}
+
+	//3.如果玩家的牌出完了，计算本局得分
+	Player* prev = player->getPrevPlayer();
+	Player* next = player->getNextPlayer();
+	if (player->getCards().isEmpty()) {
+		if (player->getRole() == Player::LANDLORD) {
+			player->setScore(player->getScore() + 2 * m_curBet);
+			prev->setScore(prev->getScore() - m_curBet);
+			next->setScore(next->getScore() - m_curBet);
+			
+			player->setIsWin(true);
+			prev->setIsWin(false);
+			next->setIsWin(false);
+		}
+		else if (player->getRole() == Player::FARMER && prev->getRole() == Player::FARMER) {
+			player->setScore(player->getScore() + m_curBet);
+			prev->setScore(prev->getScore() + m_curBet);
+			next->setScore(next->getScore() - 2 * m_curBet);
+
+			player->setIsWin(true);
+			prev->setIsWin(true);
+			next->setIsWin(false);
+		}
+		else if (player->getRole() == Player::FARMER && next->getRole() == Player::FARMER) {
+			player->setScore(player->getScore() + m_curBet);
+			next->setScore(next->getScore() + m_curBet);
+			prev->setScore(prev->getScore() - 2 * m_curBet);
+
+			player->setIsWin(true);
+			prev->setIsWin(false);
+			next->setIsWin(true);
+		}
+		emit playerStatusChanged(player, GameControl::WINNING);
+		return;
+	}
+	//4.如果牌没有出完，下一个玩家继续出牌
+	m_currPlayer = player->getNextPlayer();
+	m_currPlayer->preparePlayHand();
+	emit playerStatusChanged(m_currPlayer, GameControl::THINKPLAYHAND);
 }
 
 void GameControl::onGrabBet(Player* player, int bet)
@@ -163,7 +228,7 @@ void GameControl::onGrabBet(Player* player, int bet)
 	//2.判断玩家下注是否为3分，是则抢地主结束
 	if (bet == 3) {
 		//玩家成为地主
-		becomeLord(player);
+		becomeLord(player, bet);
 		//清空record数据
 		m_betRecord.reset();
 		return;
@@ -180,7 +245,7 @@ void GameControl::onGrabBet(Player* player, int bet)
 			emit gameStatusChanged(DISPATCHCARD);
 		}
 		else {
-			becomeLord(m_betRecord.player);
+			becomeLord(m_betRecord.player, m_betRecord.bet);
 		}
 		m_betRecord.reset();
 		return;

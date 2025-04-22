@@ -20,11 +20,16 @@ RobotGrapLord::~RobotGrapLord()
 {
 }
 
-void robotGrapLord::work()
+void robotGrapLord::workGrapLord()
 {
 	//考虑叫地主
-	QTimer::singleShot(2000, this,[&]() {m_player->thinkCallLorad();});
+	QTimer::singleShot(2000, this, [&]() {m_player->thinkCallLorad(); });
 	
+}
+
+void robotGrapLord::workPlayHand()
+{
+	QTimer::singleShot(2000, this, [&]() {m_player->thinkPlayHand(); });
 }
 
 robotGrapLord::robotGrapLord(Robot* player, QObject* parent)

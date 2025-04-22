@@ -24,7 +24,7 @@ void Robot::prepareCallLord()
 	QThread* Worker1 = new QThread();
 	robotGrapLord* sub = new robotGrapLord(this, nullptr);
 	sub->moveToThread(Worker1);
-	connect(Worker1, &QThread::started, sub, &robotGrapLord::work);
+	connect(Worker1, &QThread::started, sub, &robotGrapLord::workGrapLord);
 	connect(Worker1, &QThread::finished, this, [=]() {
 		if (Worker1) { // 检查 Worker1 是否为 nullptr
 			if (Worker1->isRunning()) {
@@ -40,19 +40,34 @@ void Robot::prepareCallLord()
 
 void Robot::preparePlayHand()
 {
-	//创建线程类
-	RobotPlayHand* subThread = new RobotPlayHand(this);
-	subThread->start();
+	////创建线程类
+	//RobotPlayHand* subThread = new RobotPlayHand(this);
+	//subThread->start();
 
-	connect(subThread, &RobotPlayHand::finished, subThread, &RobotPlayHand::deleteLater);
-	connect(subThread, &RobotPlayHand::finished, this, [=]() {//使用=和lambda表达式不是很安全
-		if (subThread) { // 检查 Worker1 是否为 nullptr
-			if (subThread->isRunning()) {
-				subThread->quit();
-				subThread->wait();
+	//connect(subThread, &RobotPlayHand::finished, subThread, &RobotPlayHand::deleteLater);
+	//connect(subThread, &RobotPlayHand::finished, this, [=]() {//使用=和lambda表达式不是很安全
+	//	if (subThread) { // 检查 Worker1 是否为 nullptr
+	//		if (subThread->isRunning()) {
+	//			subThread->quit();
+	//			subThread->wait();
+	//		}
+	//	}
+	//	});
+	QThread* Worker2 = new QThread();
+	robotGrapLord* sub = new robotGrapLord(this, nullptr);
+	sub->moveToThread(Worker2);
+	connect(Worker2, &QThread::started, sub, &robotGrapLord::workPlayHand);
+	connect(Worker2, &QThread::finished, this, [=]() {
+		if (Worker2) { // 检查 Worker1 是否为 nullptr
+			if (Worker2->isRunning()) {
+				Worker2->quit();
+				Worker2->wait();
 			}
 		}
-		});
+		}); // 确保线程结束时释放内存
+	connect(Worker2, &QThread::finished, Worker2, &QThread::deleteLater); // 确保线程结束时释放内存
+
+	Worker2->start();
 }
 
 void Robot::thinkCallLorad()

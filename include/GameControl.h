@@ -64,7 +64,7 @@ public:
 	//准备叫地主
 	void startLordCard();
 	//成为地主
-	void becomeLord(Player* player);
+	void becomeLord(Player* player, int bet);
 	//清空得分
 	void clearPlayerScore();
 	//得到玩家下注的最高分数
@@ -81,7 +81,10 @@ signals:
 	void notifyGrabLordBet(Player* player, int bet, bool flag);
 	//游戏状态变化
 	void gameStatusChanged(GameStatus status);
-
+	//通知玩家出牌
+	void notifyPlayHand(Player* player, Cards& cards);
+	//给玩家传递出牌数据
+	void pendingInfo(Player* player, Cards& cards);
 public:
 	GameControl(QObject *parent);
 	~GameControl();
@@ -94,4 +97,5 @@ private:
 	Cards m_pendCards;
 	Cards m_allCards;
 	BetRecord m_betRecord;
+	int m_curBet;
 };

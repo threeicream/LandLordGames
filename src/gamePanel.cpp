@@ -12,6 +12,7 @@
 #include <QTimer>
 #include <QPropertyAnimation>
 #include "AnimationWindow.h"
+#include "PlayHand.h"
 
 gamePanel::gamePanel(QWidget *parent)
 	: QWidget(parent)
@@ -410,6 +411,79 @@ void gamePanel::updatePlayerCards(Player* player)
 	}
 }
 
+void gamePanel::onDisposePlayHand(Player* player, Cards& cards)
+{
+	//1.隐藏上一轮打出的牌
+	hidePlayerDropCards(player);
+	//存储玩家打出的牌
+	auto it = m_contextMap.find(player);
+	it->lastCards = cards;
+	//2.根据牌型播放音效
+	PlayHand hand(cards);
+	PlayHand::HandType type = hand.getType();
+	switch (type)
+	{
+	case PlayHand::Hand_Unknown:
+		break;
+	case PlayHand::Hand_Pass:
+		break;
+	case PlayHand::Hand_Single:
+		break;
+	case PlayHand::Hand_Pair:
+		break;
+	case PlayHand::Hand_Triple:
+		break;
+	case PlayHand::Hand_Triple_Single:
+		break;
+	case PlayHand::Hand_Triple_Pair:
+		break;
+	case PlayHand::Hand_Plane:
+		showAnimation(PLANE);
+		break;
+	case PlayHand::Hand_Plane_Two_Single:
+		showAnimation(PLANE);
+		break;
+	case PlayHand::Hand_Plane_Two_Pair:
+		showAnimation(PLANE);
+		break;
+	case PlayHand::Hand_Seq_Pair:
+		showAnimation(LIANDUI);
+		break;
+	case PlayHand::Hand_Seq_Single:
+		showAnimation(SHUNZI);
+		break;
+	case PlayHand::Hand_Bomb:
+		showAnimation(BOMB);
+		break;
+	case PlayHand::Hand_Bomb_Single:
+		break;
+	case PlayHand::Hand_Bomb_Pair:
+		break;
+	case PlayHand::Hand_Bomb_Two_Single:
+		break;
+	case PlayHand::Hand_Bomb_Jokers:
+		showAnimation(BOMB);
+		break;
+	case PlayHand::Hand_Bomb_Jokers_Single:
+		break;
+	case PlayHand::Hand_Bomb_Jokers_Pair:
+		break;
+	case PlayHand::Hand_Bomb_Jokers_Two_Single:
+		break;
+	default:
+		break;
+	}
+	//如果玩家打出的是空牌，显示提示信息
+	if (cards.isEmpty()) {
+		it->info->setPixmap(QPixmap(":/LordGame/image/pass.png"));
+		it->info->show();
+	}
+	//3.更新玩家剩余的牌
+	updatePlayerCards(player);
+	//4.播放提示音效
+
+}
+
 void gamePanel::showAnimation(AnimationType type, int bet)
 {
 	switch (type)
@@ -433,6 +507,23 @@ void gamePanel::showAnimation(AnimationType type, int bet)
 		break;
 	}
 	m_animation->show();
+}
+
+void gamePanel::hidePlayerDropCards(Player* player)
+{
+	auto it = m_contextMap.find(player);
+	if (it != m_contextMap.end()) {
+		if (it->lastCards.isEmpty()) {
+			it->info->hide();
+		}
+		else {//隐藏
+			//Cards-->Card
+			CardLsit list = it->lastCards.toCardList();
+			for (auto last = list.begin(); last != list.end(); ++last) {
+				m_cardMap[*last]->hide();//隐藏cardPanel对象
+			}
+		}
+	}
 }
 
 void gamePanel::onPlayerStatusChanged(Player* player, GameControl::PlayerStatus status)

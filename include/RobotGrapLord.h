@@ -20,7 +20,8 @@ class robotGrapLord : public QObject
 {
 	Q_OBJECT
 public:
-	void work();
+	void workGrapLord();
+	void workPlayHand();
 public:
 	robotGrapLord(Robot* player, QObject* parent = nullptr);
 	~robotGrapLord();

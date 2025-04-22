@@ -61,6 +61,9 @@ public:
 	Player* getPendPlayer()const;
 	Cards getPendCards()const;
 
+	//存储出牌玩家对象和打出的牌
+	void storePendingInfo(Player* player, Cards& cards);
+
 	//虚函数
 	virtual void prepareCallLord();
 	virtual void preparePlayHand();

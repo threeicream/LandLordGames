@@ -54,8 +54,13 @@ public:
 	//更新扑克牌在窗口的显示
 	void updatePlayerCards(Player* player);
 
+	//处理玩家的出牌
+	void onDisposePlayHand(Player* player, Cards& cards);
+
 	//显示特效动画
 	void showAnimation(AnimationType type, int bet = 0);
+	//隐藏玩家打出的牌
+	void hidePlayerDropCards(Player* player);
 
 public slots:
 	//处理玩家状态的变化

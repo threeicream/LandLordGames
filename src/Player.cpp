@@ -156,6 +156,12 @@ Cards Player::getPendCards() const
 	return m_pendCards;
 }
 
+void Player::storePendingInfo(Player* player, Cards& cards)
+{
+	m_PrevPlayer = player;
+	m_pendCards = cards;
+}
+
 void Player::prepareCallLord()//准备抢地主
 {
 }
