@@ -10,6 +10,7 @@
 #include <QPoint>
 #include <QLabel>
 #include <QTimer>
+#include <QImage>
 #include <QPropertyAnimation>
 #include "AnimationWindow.h"
 #include "PlayHand.h"
@@ -64,6 +65,7 @@ void gamePanel::gameControlInit()
 	connect(m_gameCtl, &GameControl::playerStatusChanged, this, &gamePanel::onPlayerStatusChanged);
 	connect(m_gameCtl, &GameControl::notifyGrabLordBet, this, &gamePanel::onGrabLordBet);
 	connect(m_gameCtl, &GameControl::gameStatusChanged, this, &gamePanel::gameStatusProcess);
+	connect(m_gameCtl, &GameControl::notifyPlayHand, this, &gamePanel::onDisposePlayHand);//移动玩家打出的牌
 }
 
 void gamePanel::UpdateScorePanel()
@@ -240,6 +242,24 @@ void gamePanel::gameStatusProcess(GameControl::GameStatus status)
 		m_gameCtl->startLordCard();
 		break;
 	case GameControl::PLAYINGHAND:
+		//隐藏底牌和移动的牌
+		m_baseCard->hide();
+		m_moveCard->hide();
+		//显示留给地主的牌
+		for (int i = 0; i < m_last3Card.size(); ++i) {
+			m_last3Card[i]->show();
+		}
+		
+		for (int i = 0; i < m_playerList.size(); ++i) {
+			//隐藏各个玩家抢地主的相关信息
+			PlayerContext& context = m_contextMap[m_playerList[i]];
+			context.info->hide();
+			//显示各个玩家的头像
+			QPixmap pixmap = loadRoleImage(m_playerList[i]->getSex(), m_playerList[i]->getDirection(), m_playerList[i]->getRole());
+			context.roleImg->setPixmap(pixmap);
+			context.roleImg->show();
+		}
+
 		break;
 	default:
 		break;
@@ -387,7 +407,7 @@ void gamePanel::updatePlayerCards(Player* player)
 	Cards cards = player->getCards();
 	CardLsit list = cards.toCardList();
 	//取出展示扑克牌的区域
-	int cardSpace = 20;
+	int cardSpace = 20;//牌之间的间隙
 	QRect cardsRect = m_contextMap[player].cardRect;
 	for (int i = 0; i < list.size(); ++i) {
 		CardPanel* panel = m_cardMap[list[i]];
@@ -395,7 +415,7 @@ void gamePanel::updatePlayerCards(Player* player)
 		panel->raise();//让其位于最上层
 		panel->setFrontSide(m_contextMap[player].isFrontSide);
 		//水平or垂直显示
-		if (m_contextMap[player].align==HOR) {
+		if (m_contextMap[player].align == HOR) {
 			int leftx = cardsRect.left() + (cardsRect.width() - (list.size() - 1) * cardSpace - panel->width()) / 2;
 			int topy = cardsRect.top() + (cardsRect.height() - panel->height()) / 2;
 			if (panel->isSelected()) {
@@ -409,12 +429,37 @@ void gamePanel::updatePlayerCards(Player* player)
 			panel->move(leftx, topy + cardSpace * i);
 		}
 	}
+	//显示玩家打出的牌
+
+	//得到当前玩家的出牌区域以及本轮打出的牌
+	QRect playCardRect = m_contextMap[player].PlayHandRect;
+	Cards lastCards = m_contextMap[player].lastCards;
+	if (!lastCards.isEmpty()) {
+		CardLsit lastCardList = lastCards.toCardList();
+		auto itplayed = lastCardList.constBegin();
+		for (int i = 0; itplayed != lastCardList.constEnd(); ++itplayed, ++i) {
+			CardPanel* panel = m_cardMap[*itplayed];
+			panel->setFrontSide(true);
+			panel->raise();//显示到同级别的顶层
+			//将打出的牌移动到出牌区域
+			if (m_contextMap[player].align == HOR) {
+				int leftBase = playCardRect.left() + (playCardRect.width() - (lastCardList.size() - 1) * cardSpace - panel->width()) / 2;
+				int top = playCardRect.top() + (playCardRect.height() - panel->height()) / 2;
+				panel->move(leftBase + i * cardSpace , top);
+			}
+			else {
+				int leftBase = playCardRect.left() + (playCardRect.width() - panel->width()) / 2;
+				int top = playCardRect.top();//这里牌太多了
+				panel->move(leftBase, top + i * cardSpace);
+			}
+			panel->show();
+		}
+	}
 }
 
 void gamePanel::onDisposePlayHand(Player* player, Cards& cards)
 {
-	//1.隐藏上一轮打出的牌
-	hidePlayerDropCards(player);
+	
 	//存储玩家打出的牌
 	auto it = m_contextMap.find(player);
 	it->lastCards = cards;
@@ -526,18 +571,83 @@ void gamePanel::hidePlayerDropCards(Player* player)
 	}
 }
 
+QPixmap gamePanel::loadRoleImage(Player::Sex sex, Player::Direction direct, Player::Role role)
+{
+	//找到相关图片，并加载到相关对象
+	QVector<QString>lordMan;
+	lordMan << ":/LordGame/image/lord_man_1.png" << ":/LordGame/image/lord_man_2.png";
+	QVector<QString>lordWoMan;
+	lordWoMan << ":/LordGame/image/lord_woman_1.png" << ":/LordGame/image/lord_woman_2.png";
+	QVector<QString>farMan;
+	farMan << ":/LordGame/image/farmer_man_1.png" << ":/LordGame/image/farmer_man_2.png";
+	QVector<QString>farWoMan;
+	farWoMan << ":/LordGame/image/farmer_woman_1.png" << ":/LordGame/image/farmer_woman_2.png";
+
+	//加载到QImage
+	QImage image;
+	if (sex == Player::MAN && role == Player::LANDLORD) {
+		int random = QRandomGenerator::global()->bounded(2);
+		image.load(lordMan[random]);
+	}
+	else if (sex == Player::MAN && role == Player::FARMER) {
+		int random = QRandomGenerator::global()->bounded(2);
+		image.load(farMan[random]);
+	}
+	else if (sex == Player::WOMAN && role == Player::LANDLORD) {
+		int random = QRandomGenerator::global()->bounded(2);
+		image.load(lordWoMan[random]);
+	}
+	else if (sex == Player::WOMAN && role == Player::FARMER) {
+		int random = QRandomGenerator::global()->bounded(2);
+		image.load(farWoMan[random]);
+	}
+
+	QPixmap pixmap;
+	if (direct == Player::LEFT) {
+		pixmap.fromImage(image);
+	}
+	else {
+		pixmap.fromImage(image.mirrored(true, false));
+	}
+	return pixmap;
+}
+
 void gamePanel::onPlayerStatusChanged(Player* player, GameControl::PlayerStatus status)
 {
 	switch (status)
 	{
 	case GameControl::THINKCALLLORD:
 		//玩家使用
-		if(player==m_gameCtl->getUserPlayer())
+		if (player == m_gameCtl->getUserPlayer())
 			ui.buttonGroup->selectPanel(ButtonGroup::CALLLORD, m_gameCtl->getPlayerMaxBet());
+		else
+			ui.buttonGroup->selectPanel(ButtonGroup::EMPTY, m_gameCtl->getPlayerMaxBet());
 		break;
 	case GameControl::THINKPLAYHAND:
+		//1.隐藏上一轮打出的牌
+		hidePlayerDropCards(player);
+
+		if (player == m_gameCtl->getUserPlayer()) {
+			//取出出牌玩家的对象
+			Player* penPlayer = m_gameCtl->getPendPlayer();
+			if (penPlayer == m_gameCtl->getUserPlayer() || !penPlayer)
+				ui.buttonGroup->selectPanel(ButtonGroup::PLAYCARD);
+			else
+				ui.buttonGroup->selectPanel(ButtonGroup::PASSORPLAY);
+		}
+		else
+			ui.buttonGroup->selectPanel(ButtonGroup::EMPTY, m_gameCtl->getPlayerMaxBet());
 		break;
 	case GameControl::WINNING:
+		//展示其他玩家的扑克牌
+		m_contextMap[m_gameCtl->getLeftRobot()].isFrontSide = true;
+		m_contextMap[m_gameCtl->getRightRobot()].isFrontSide = true;
+		updatePlayerCards(m_gameCtl->getLeftRobot());
+		updatePlayerCards(m_gameCtl->getRightRobot());
+		//更新玩家得分
+		UpdateScorePanel();
+
+		m_gameCtl->setCurrentPlayer(player);//设置为第一个叫地主的玩家
 		break;
 	default:
 		break;

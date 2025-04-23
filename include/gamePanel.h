@@ -61,6 +61,8 @@ public:
 	void showAnimation(AnimationType type, int bet = 0);
 	//隐藏玩家打出的牌
 	void hidePlayerDropCards(Player* player);
+	//加载玩家头像
+	QPixmap loadRoleImage(Player::Sex sex, Player::Direction direct, Player::Role role);
 
 public slots:
 	//处理玩家状态的变化
