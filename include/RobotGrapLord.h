@@ -26,5 +26,5 @@ public:
 	robotGrapLord(Robot* player, QObject* parent = nullptr);
 	~robotGrapLord();
 private:
-	Robot* m_player;
+	Robot* m_player = nullptr;
 };

@@ -89,11 +89,11 @@ public:
 	GameControl(QObject *parent);
 	~GameControl();
 private:
-	Robot* m_robotLeft;
-	Robot* m_robotRight;
-	UserPlayer* m_user;
-	Player* m_currPlayer;
-	Player* m_pendPlayer;
+	Robot* m_robotLeft = nullptr;
+	Robot* m_robotRight = nullptr;
+	UserPlayer* m_user = nullptr;
+	Player* m_currPlayer = nullptr;
+	Player* m_pendPlayer = nullptr;
 	Cards m_pendCards;
 	Cards m_allCards;
 	BetRecord m_betRecord;

@@ -57,15 +57,21 @@ void gamePanel::gameControlInit()
 {
 	m_gameCtl = new GameControl(this);
 	m_gameCtl->playerInit();
-	//得到三个玩家的实例对象
-	m_playerList.append(m_gameCtl->getLeftRobot());
-	m_playerList.append(m_gameCtl->getRightRobot());
-	m_playerList.append(m_gameCtl->getUserPlayer());
+	// 得到三个玩家的实例对象
+	Robot* leftRobot = m_gameCtl->getLeftRobot();
+	Robot* rightRobot = m_gameCtl->getRightRobot();
+	UserPlayer* user = m_gameCtl->getUserPlayer();
+	// 存储的顺序: 左侧机器人, 右侧机器人, 当前玩家
+	m_playerList << leftRobot << rightRobot << user;
 
 	connect(m_gameCtl, &GameControl::playerStatusChanged, this, &gamePanel::onPlayerStatusChanged);
 	connect(m_gameCtl, &GameControl::notifyGrabLordBet, this, &gamePanel::onGrabLordBet);
 	connect(m_gameCtl, &GameControl::gameStatusChanged, this, &gamePanel::gameStatusProcess);
 	connect(m_gameCtl, &GameControl::notifyPlayHand, this, &gamePanel::onDisposePlayHand);//移动玩家打出的牌
+
+	/*connect(leftRobot, &Player::notifyPickCards, this, &gamePanel::disposCard);
+	connect(rightRobot, &Player::notifyPickCards, this, &gamePanel::disposCard);
+	connect(user, &Player::notifyPickCards, this, &gamePanel::disposCard);*/
 }
 
 void gamePanel::UpdateScorePanel()
@@ -142,25 +148,25 @@ void gamePanel::buttonGroupInit()
 void gamePanel::PlayerContextInit()
 {
 	//1.放置玩家扑克牌的区域
-	QRect cardRect[] = {
+	const QRect cardRect[] = {
 		//x,y,width,height
 		QRect(90, 130, 100, height() - 200),                    // 左侧机器人
 		QRect(rect().right() - 190, 130, 100, height() - 200),  // 右侧机器人
 		QRect(250, rect().bottom() - 120, width() - 500, 100)   // 当前玩家
 	};
 	//2.玩家出牌的区域
-	QRect playHandRect[] = {
+	const QRect playHandRect[] = {
 		//x,y,width,height
 		QRect(260, 150, 100, 100),                              // 左侧机器人
 		QRect(rect().right() - 360, 150, 100, 100),             // 右侧机器人
 		QRect(150, rect().bottom() - 290, width() - 300, 105)   // 当前玩家
 	};
 	//3.玩家头像显示的位置
-	QPoint roleImgPos[] = {
+	const QPoint roleImgPos[] = {
 		//x,y,width,height
 		QPoint(cardRect[0].left() - 80,cardRect[0].height() / 2 + 20) ,//左侧机器人
-		QPoint(cardRect[1].right() + 10,cardRect[0].height() / 2 + 20) ,//右侧机器人
-		QPoint(cardRect[2].right() - 10,cardRect[0].top() - 10) //当前玩家
+		QPoint(cardRect[1].right() + 10,cardRect[1].height() / 2 + 20) ,//右侧机器人
+		QPoint(cardRect[2].right() - 10,cardRect[2].top() - 10) //当前玩家
 	};
 
 	//循环
@@ -255,11 +261,11 @@ void gamePanel::gameStatusProcess(GameControl::GameStatus status)
 			PlayerContext& context = m_contextMap[m_playerList[i]];
 			context.info->hide();
 			//显示各个玩家的头像
-			QPixmap pixmap = loadRoleImage(m_playerList[i]->getSex(), m_playerList[i]->getDirection(), m_playerList[i]->getRole());
+			Player* player = m_playerList[i];
+			QPixmap pixmap = loadRoleImage(player->getSex(), player->getDirection(), player->getRole());
 			context.roleImg->setPixmap(pixmap);
 			context.roleImg->show();
 		}
-
 		break;
 	default:
 		break;
@@ -547,11 +553,12 @@ void gamePanel::showAnimation(AnimationType type, int bet)
 		m_animation->setFixedSize(160, 98);
 		m_animation->move((width() - m_animation->width()) / 2, (height() - m_animation->height()) / 2 - 140);
 		m_animation->showBetScore(bet);
+		m_animation->show();
 		break;
 	default:
 		break;
 	}
-	m_animation->show();
+	//m_animation->show();
 }
 
 void gamePanel::hidePlayerDropCards(Player* player)
@@ -604,10 +611,10 @@ QPixmap gamePanel::loadRoleImage(Player::Sex sex, Player::Direction direct, Play
 
 	QPixmap pixmap;
 	if (direct == Player::LEFT) {
-		pixmap.fromImage(image);
+		pixmap = pixmap.fromImage(image);
 	}
 	else {
-		pixmap.fromImage(image.mirrored(true, false));
+		pixmap = pixmap.fromImage(image.mirrored(true, false));
 	}
 	return pixmap;
 }
@@ -620,8 +627,8 @@ void gamePanel::onPlayerStatusChanged(Player* player, GameControl::PlayerStatus 
 		//玩家使用
 		if (player == m_gameCtl->getUserPlayer())
 			ui.buttonGroup->selectPanel(ButtonGroup::CALLLORD, m_gameCtl->getPlayerMaxBet());
-		else
-			ui.buttonGroup->selectPanel(ButtonGroup::EMPTY, m_gameCtl->getPlayerMaxBet());
+		/*else
+			ui.buttonGroup->selectPanel(ButtonGroup::EMPTY, m_gameCtl->getPlayerMaxBet());*/
 		break;
 	case GameControl::THINKPLAYHAND:
 		//1.隐藏上一轮打出的牌

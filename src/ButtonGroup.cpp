@@ -20,7 +20,7 @@ void ButtonGroup::initButtons()
 	ui.playCardButton->setImage(":/LordGame/image/chupai_btn-1.png", ":/LordGame/image/chupai_btn-2.png", ":/LordGame/image/chupai_btn-3.png");
 	//不要
 	ui.passsButton->setText("");
-	ui.passsButton->setImage(":/LordGame/image/chupai_pass_btn-1.png", ":/LordGame/image/chupai_pass_btn-1.png", ":/LordGame/image/chupai_pass_btn-1.png");
+	ui.passsButton->setImage(":/LordGame/image/pass_btn-1.png", ":/LordGame/image/pass_btn-2.png", ":/LordGame/image/pass_btn-3.png");
 	ui.enterButton->setText("");
 	ui.enterButton->setImage(":/LordGame/image/chupai_btn-1.png", ":/LordGame/image/chupai_btn-2.png", ":/LordGame/image/chupai_btn-3.png");
 	//0分
@@ -49,7 +49,7 @@ void ButtonGroup::initButtons()
 
 void ButtonGroup::selectPanel(Panel type ,int bet)
 {
-	ui.stackedWidget->setCurrentIndex(type);
+	ui.stackedWidget->setCurrentIndex(static_cast<int>(type));
 	if (type != Panel::CALLLORD) {
 		return;
 	}

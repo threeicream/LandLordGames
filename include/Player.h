@@ -84,9 +84,9 @@ protected:
 	Type m_tyep;
 	int m_score;
 	bool m_isWin;
-	Player* m_PrevPlayer;
-	Player* m_NextPlayer;
+	Player* m_PrevPlayer = nullptr;
+	Player* m_NextPlayer = nullptr;
 	Cards m_cards;//存储玩家牌
 	Cards m_pendCards;
-	Player* pendPlayer;
+	Player* m_pendPlayer = nullptr;
 };

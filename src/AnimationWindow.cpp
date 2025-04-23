@@ -23,6 +23,8 @@ void AnimationWindow::paintEvent(QPaintEvent* event)
 {
 	QPainter painter(this);
 	painter.drawPixmap(0, 0, m_image.width(), m_image.height(), m_image);
+
+	QWidget::paintEvent(event);
 }
 
 AnimationWindow::AnimationWindow(QWidget *parent)

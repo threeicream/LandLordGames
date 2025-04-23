@@ -100,7 +100,7 @@ private:
 		Cards lastCards;
 	};
 	QPixmap m_backGroundPixmap;
-	GameControl* m_gameCtl;
+	GameControl* m_gameCtl = nullptr;
 	QVector<Player*>m_playerList;
 	QMap<Card, CardPanel*>m_cardMap;
 	QSize m_cardSize;
@@ -111,6 +111,6 @@ private:
 	QVector<CardPanel*>m_last3Card;
 	QPoint m_baseCardPos;
 	GameControl::GameStatus m_gameStatus;
-	QTimer* m_timer;
-	AnimationWindow* m_animation;
+	QTimer* m_timer = nullptr;
+	AnimationWindow* m_animation = nullptr;
 };

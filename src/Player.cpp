@@ -148,7 +148,7 @@ void Player::setPendingInfo(Player* player, const Cards& cards)
 
 Player* Player::getPendPlayer() const
 {
-	return m_PrevPlayer;
+	return m_pendPlayer;
 }
 
 Cards Player::getPendCards() const

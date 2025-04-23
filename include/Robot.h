@@ -14,7 +14,7 @@ public:
 	//考虑叫地主
 	void thinkCallLorad();
 
-	//考虑叫地主
+	//考虑出牌
 	void thinkPlayHand();
 public:
 	using Player::Player;//继承基类构造函数
