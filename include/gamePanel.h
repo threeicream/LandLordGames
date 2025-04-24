@@ -9,6 +9,7 @@
 #include <QMouseEvent>
 #include "Cards.h"
 #include "GameControl.h"
+#include <QSet>
 class QPaintEvent;
 class Player;
 class CardPanel;
@@ -69,17 +70,20 @@ public slots:
 	void onPlayerStatusChanged(Player* player, GameControl::PlayerStatus status);
 	//处理抢地主点数
 	void onGrabLordBet(Player* player, int bet, bool flag);
-
+	//处理玩家选牌
+	void onCardSelected(Qt::MouseButton button);
 protected:
 	virtual void paintEvent(QPaintEvent* event)override;
 
-	void mousePressEvent(QMouseEvent* event) override {
-		QPoint pos = event->pos(); // 获取相对于窗口客户区域的坐标
-		qDebug() << "Mouse pressed at:" << pos;
-		// 如果你想获取相对于屏幕的坐标，可以使用 event->globalPos()
-		QPoint globalPos = event->globalPos();
-		qDebug() << "Mouse pressed at (global):" << globalPos;
-	}
+	virtual void mouseMoveEvent(QMouseEvent* event)override;
+
+	//virtual void mousePressEvent(QMouseEvent* event) override {
+	//	QPoint pos = event->pos(); // 获取相对于窗口客户区域的坐标
+	//	qDebug() << "Mouse pressed at:" << pos;
+	//	// 如果你想获取相对于屏幕的坐标，可以使用 event->globalPos()
+	//	QPoint globalPos = event->globalPos();
+	//	qDebug() << "Mouse pressed at (global):" << globalPos;
+	//}
 private:
 	Ui::gamePanel ui;
 private:
@@ -113,4 +117,8 @@ private:
 	GameControl::GameStatus m_gameStatus;
 	QTimer* m_timer = nullptr;
 	AnimationWindow* m_animation = nullptr;
+	CardPanel* m_curSelCard = nullptr;
+	QSet<CardPanel*>m_selectCards;
+	QRect m_cardsRect;//出牌区域
+	QHash<CardPanel*, QRect>m_userCards;
 };

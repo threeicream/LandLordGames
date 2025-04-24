@@ -33,6 +33,11 @@ public:
 	//扑克牌的所有者
 	void setOwner(Player* player);//指针为组合关系，一个类 拥有 另一个类，并且被拥有的类不能独立存在
 	Player* getOwner();
+
+	//模拟扑克牌点击事件
+	void clicked();
+signals:
+	void cardSelected(Qt::MouseButton button);
 protected:
 	virtual void paintEvent(QPaintEvent* event)override;
 	virtual void mousePressEvent(QMouseEvent* event)override;
