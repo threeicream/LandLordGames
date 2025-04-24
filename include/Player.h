@@ -62,7 +62,7 @@ public:
 	Cards getPendCards()const;
 
 	//存储出牌玩家对象和打出的牌
-	void storePendingInfo(Player* player, Cards& cards);
+	void storePendingInfo(Player* player, const Cards& cards);
 
 	//虚函数
 	virtual void prepareCallLord();

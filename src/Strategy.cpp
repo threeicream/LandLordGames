@@ -1,11 +1,14 @@
 #include "Strategy.h"
 #include <QMap>
+#include <QDebug>
 
 Cards Strategy::makeStrategy()
 {
 	//得到出牌玩家对象以及打出的牌
 	Player* penPlayer = m_player->getPendPlayer();
 	Cards penCards = m_player->getPendCards();
+	qDebug() << "输出玩家所有牌：";
+	m_cards.getAllCardsPoint();
 	//判断上次出牌的玩家是不是自己
 	if (penPlayer == m_player || penPlayer == nullptr) {//是，则出牌没有限制
 		return firstPlay();
@@ -25,7 +28,7 @@ Cards Strategy::makeStrategy()
 
 Cards Strategy::firstPlay()
 {
-	//判断顽疾手中是否只剩单一的牌型
+	//判断玩家手中是否只剩单一的牌型
 	PlayHand hand(m_cards);
 	if (hand.getType() != PlayHand::Hand_Unknown) {
 		return m_cards;
@@ -75,13 +78,15 @@ Cards Strategy::firstPlay()
 	int maxNum = INT_MIN;
 	int seq = 0;
 	if (hasPair) {
-		for (int i = 0; i < seqPairArray.size(); ++i) {
-			if (seqPairArray[i].cardCount() > maxNum) {
-				maxNum = seqPairArray[i].cardCount();
-				seq = i;
+		Cards maxPair;
+		for (int i = 0; i < seqPairArray.size(); ++i)
+		{
+			if (seqPairArray[i].cardCount() > maxPair.cardCount())
+			{
+				maxPair = seqPairArray[i];
 			}
 		}
-		return seqPairArray[seq];
+		return maxPair;
 	}
 
 	if (hasPlane) {
@@ -628,7 +633,7 @@ Cards Strategy::getBaseSeqPair(Card::CardPoint point)
 	Cards card1 = findSamePointCards(static_cast<Card::CardPoint>(point + 1), 2);
 	Cards card2 = findSamePointCards(static_cast<Card::CardPoint>(point + 2), 2);
 	Cards baseSeq;
-	if (!card0.isEmpty() || !card1.isEmpty() || !card2.isEmpty())
+	if (!card0.isEmpty() && !card1.isEmpty() && !card2.isEmpty())
 		baseSeq << card0 << card1 << card2;
 	return baseSeq;
 }

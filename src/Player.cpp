@@ -142,7 +142,7 @@ void Player::playHand(Cards& cards)
 
 void Player::setPendingInfo(Player* player, const Cards& cards)
 {
-	m_PrevPlayer = player;
+	m_pendPlayer = player;
 	m_pendCards = cards; 
 }
 
@@ -156,9 +156,9 @@ Cards Player::getPendCards() const
 	return m_pendCards;
 }
 
-void Player::storePendingInfo(Player* player, Cards& cards)
+void Player::storePendingInfo(Player* player, const Cards& cards)
 {
-	m_PrevPlayer = player;
+	m_pendPlayer = player;
 	m_pendCards = cards;
 }
 
