@@ -117,11 +117,13 @@ void Player::storeDispatchCard(Card& card)
 	m_cards.addCard(card);
 	Cards cs;
 	cs.addCard(card);
+	emit notifyPickCard(this, cs);
 }
 
 void Player::storeDispatchCards(Cards& cards)
 {
 	m_cards.addCard(cards);
+	emit notifyPickCard(this, cards);
 }
 
 Cards Player::getCards()const

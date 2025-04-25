@@ -69,17 +69,17 @@ void gamePanel::gameControlInit()
 	connect(m_gameCtl, &GameControl::gameStatusChanged, this, &gamePanel::gameStatusProcess);
 	connect(m_gameCtl, &GameControl::notifyPlayHand, this, &gamePanel::onDisposePlayHand);//移动玩家打出的牌
 
-	/*connect(leftRobot, &Player::notifyPickCards, this, &gamePanel::disposCard);
-	connect(rightRobot, &Player::notifyPickCards, this, &gamePanel::disposCard);
-	connect(user, &Player::notifyPickCards, this, &gamePanel::disposCard);*/
+	connect(leftRobot, &Player::notifyPickCard, this, &gamePanel::disposCard);
+	connect(rightRobot, &Player::notifyPickCard, this, &gamePanel::disposCard);
+	connect(user, &Player::notifyPickCard, this, &gamePanel::disposCard);
 }
 
 void gamePanel::UpdateScorePanel()
 {
 	ui.scorePanel->setScore(
-		m_playerList[0]->getScore(), 
+		m_playerList[2]->getScore(), 
 		m_playerList[1]->getScore(), 
-		m_playerList[2]->getScore());
+		m_playerList[0]->getScore());
 }
 
 void gamePanel::CardMapInit()
@@ -137,8 +137,8 @@ void gamePanel::buttonGroupInit()
 		gameStatusProcess(GameControl::GameStatus::DISPATCHCARD);
 
 		});
-	connect(ui.buttonGroup, &ButtonGroup::playHand, this, [=]() {});
-	connect(ui.buttonGroup, &ButtonGroup::pass, this, [=]() {});
+	connect(ui.buttonGroup, &ButtonGroup::playHand, this, &gamePanel::onUserPlayHand);
+	connect(ui.buttonGroup, &ButtonGroup::pass, this, &gamePanel::onUserPass);
 	connect(ui.buttonGroup, &ButtonGroup::betPoint, this, [=](int bet) {//玩家下注
 		m_gameCtl->getUserPlayer()->grabLordBet(bet);
 		ui.buttonGroup->selectPanel(ButtonGroup::EMPTY);
@@ -328,7 +328,7 @@ void gamePanel::onDispatchCard()
 		Card card = m_gameCtl->takeOneCard();
 		curPlayer->storeDispatchCard(card);
 		Cards cards(card);
-		disposCard(curPlayer, cards);
+		//disposCard(curPlayer, cards);由connect触发
 		//切换玩家
 		m_gameCtl->setCurrentPlayer(curPlayer->getNextPlayer());
 		curMovePos = 0;
@@ -588,6 +588,7 @@ void gamePanel::hidePlayerDropCards(Player* player)
 				m_cardMap[*last]->hide();//隐藏cardPanel对象
 			}
 		}
+		it->lastCards.clear();//清空玩家这一轮打出的牌，避免继续显示
 	}
 }
 
@@ -731,7 +732,73 @@ void gamePanel::onCardSelected(Qt::MouseButton button)
 	}
 	else if (button == Qt::RightButton) {
 		//调用出牌按钮槽函数
+		onUserPlayHand();
 	}
+}
+
+void gamePanel::onUserPlayHand()
+{
+	//判断游戏状态是否为出牌状态
+	if (m_gameStatus != GameControl::PLAYINGHAND) {
+		return;
+	}
+	//判断当前玩家是否为用户玩家
+	if (m_gameCtl->getCurrentPlayer()!=m_gameCtl->getUserPlayer()) {
+		return;
+	}
+	//判断是否出的是空牌
+	if (m_selectCards.isEmpty()) {
+		return;
+	}
+	//得到打出的牌型
+	Cards cs;
+	for (auto it : m_selectCards) {
+		Card card = it->getCard();
+		cs.addCard(card);
+	}
+	
+	PlayHand hand(cs);
+	PlayHand::HandType type = hand.getType();
+	if (type == PlayHand::Hand_Unknown) {
+		return;
+	}
+	//判断当前玩家的牌能否压住上一个出牌玩家的牌
+	if (m_gameCtl->getPendPlayer() != m_gameCtl->getUserPlayer()) {
+		Cards cards = m_gameCtl->getPendCards();
+		if (!hand.canBeat(PlayHand(cards))) {
+			return;
+		}
+	}
+	//通过玩家对象出牌
+	m_gameCtl->getUserPlayer()->playHand(cs);
+	//清空容器
+	m_selectCards.clear();
+}
+
+void gamePanel::onUserPass()
+{
+	//判断游戏状态是否为出牌状态
+	if (m_gameStatus != GameControl::PLAYINGHAND) {
+		return;
+	}
+	//判断当前玩家是否为用户玩家
+	if (m_gameCtl->getCurrentPlayer() != m_gameCtl->getUserPlayer()) {
+		return;
+	}
+	//判断当前用户玩家是不是上一次出牌的玩家
+	if (m_gameCtl->getPendPlayer() == m_gameCtl->getUserPlayer()) {
+		return;
+	}
+	//通过玩家对象出牌
+	Cards empty;
+	m_gameCtl->getUserPlayer()->playHand(empty);
+	//清空用户选择的牌
+	for (auto& it : m_selectCards) {
+		it->setSelected(false);
+	}
+	m_selectCards.clear();
+	//更新玩家待出牌区域的牌
+	updatePlayerCards(m_gameCtl->getUserPlayer());
 }
 
 void gamePanel::paintEvent(QPaintEvent* event)
@@ -759,6 +826,4 @@ void gamePanel::mouseMoveEvent(QMouseEvent* event)
 			}
 		}
 	}
-	if(event->buttons() & Qt::LeftButton)
-		qDebug() << "鼠标拖动";
 }

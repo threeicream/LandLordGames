@@ -64,7 +64,7 @@ public:
 	void hidePlayerDropCards(Player* player);
 	//加载玩家头像
 	QPixmap loadRoleImage(Player::Sex sex, Player::Direction direct, Player::Role role);
-
+	
 public slots:
 	//处理玩家状态的变化
 	void onPlayerStatusChanged(Player* player, GameControl::PlayerStatus status);
@@ -72,6 +72,10 @@ public slots:
 	void onGrabLordBet(Player* player, int bet, bool flag);
 	//处理玩家选牌
 	void onCardSelected(Qt::MouseButton button);
+	//处理玩家出牌
+	void onUserPlayHand();
+	//处理玩家跳过
+	void onUserPass();
 protected:
 	virtual void paintEvent(QPaintEvent* event)override;
 
@@ -118,7 +122,7 @@ private:
 	QTimer* m_timer = nullptr;
 	AnimationWindow* m_animation = nullptr;
 	CardPanel* m_curSelCard = nullptr;
-	QSet<CardPanel*>m_selectCards;
+	QSet<CardPanel*>m_selectCards;//选择的牌
 	QRect m_cardsRect;//出牌区域
 	QHash<CardPanel*, QRect>m_userCards;
 };

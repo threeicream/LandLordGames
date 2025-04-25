@@ -135,7 +135,6 @@ void GameControl::becomeLord(Player* player, int bet)
 	m_currPlayer = player;
 	m_curBet = bet;
 	player->storeDispatchCards(m_allCards);//三张底牌给地主
-
 	QTimer::singleShot(1000, this, [=]() {
 		//游戏状态改变
 		emit gameStatusChanged(GameStatus::PLAYINGHAND);
