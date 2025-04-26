@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>ScorePanel</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <widget class="QLabel" name="label">
@@ -185,6 +188,8 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="../resource/LordGame.qrc"/>
+ </resources>
  <connections/>
 </ui>

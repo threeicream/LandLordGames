@@ -14,6 +14,7 @@
 #include <QPropertyAnimation>
 #include "AnimationWindow.h"
 #include "PlayHand.h"
+#include "EndingPanel.h"
 
 gamePanel::gamePanel(QWidget *parent)
 	: QWidget(parent)
@@ -44,8 +45,10 @@ gamePanel::gamePanel(QWidget *parent)
 	//9.定时器实例化
 	m_timer = new QTimer(this);
 	connect(m_timer, &QTimer::timeout, this, &gamePanel::onDispatchCard);
-
+	//10.动画初始化
 	m_animation = new AnimationWindow(this);
+	//showEndingScorePanel();//测试
+
 	setMouseTracking(true); // 启用鼠标追踪
 }
 
@@ -633,6 +636,18 @@ QPixmap gamePanel::loadRoleImage(Player::Sex sex, Player::Direction direct, Play
 	return pixmap;
 }
 
+void gamePanel::showEndingScorePanel()
+{
+	QTimer::singleShot(2000, this, [&]() {
+		bool isLord = m_gameCtl->getUserPlayer()->getRole() == Player::LANDLORD ? true : false;
+		bool isWin = m_gameCtl->getUserPlayer()->getIsWin();
+		EndingPanel* panel = new EndingPanel(isLord, isWin, this);
+		panel->move((width() - panel->width()) / 2, (height() - panel->height()) / 2);
+		panel->show();
+		panel->setMyScore(m_gameCtl->getLeftRobot()->getScore(), m_gameCtl->getRightRobot()->getScore(), m_gameCtl->getUserPlayer()->getScore());
+		});
+}
+
 void gamePanel::onPlayerStatusChanged(Player* player, GameControl::PlayerStatus status)
 {
 	switch (status)
@@ -667,7 +682,8 @@ void gamePanel::onPlayerStatusChanged(Player* player, GameControl::PlayerStatus 
 		updatePlayerCards(m_gameCtl->getRightRobot());
 		//更新玩家得分
 		UpdateScorePanel();
-
+		//弹出继续游戏动画
+		showEndingScorePanel();
 		m_gameCtl->setCurrentPlayer(player);//设置为第一个叫地主的玩家
 		break;
 	default:

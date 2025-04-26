@@ -16,6 +16,7 @@ class CardPanel;
 class QLabel;
 class QTimer;
 class AnimationWindow;
+class EndingPanel;
 
 class gamePanel : public QWidget
 {
@@ -64,6 +65,8 @@ public:
 	void hidePlayerDropCards(Player* player);
 	//加载玩家头像
 	QPixmap loadRoleImage(Player::Sex sex, Player::Direction direct, Player::Role role);
+	//显示顽疾最终得分
+	void showEndingScorePanel();
 	
 public slots:
 	//处理玩家状态的变化
