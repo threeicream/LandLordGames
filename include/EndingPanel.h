@@ -16,6 +16,9 @@ public:
 
 	//设置分数
 	void setMyScore(int left,int right,int user);
+
+	//上下移动
+	void zoomY(int y);
 signals:
 	void continueGame();
 protected:

@@ -12,6 +12,7 @@
 #include <QTimer>
 #include <QImage>
 #include <QPropertyAnimation>
+#include <memory>
 #include "AnimationWindow.h"
 #include "PlayHand.h"
 #include "EndingPanel.h"
@@ -81,8 +82,8 @@ void gamePanel::UpdateScorePanel()
 {
 	ui.scorePanel->setScore(
 		m_playerList[2]->getScore(), 
-		m_playerList[1]->getScore(), 
-		m_playerList[0]->getScore());
+		m_playerList[0]->getScore(), 
+		m_playerList[1]->getScore());
 }
 
 void gamePanel::CardMapInit()
@@ -382,21 +383,21 @@ void gamePanel::cardMoveStep(Player* player, int curPos)
 	}
 }
 
-void gamePanel::zoomY(int y)
-{
-	////创建动画对象
-	//QPropertyAnimation* animation1 = new QPropertyAnimation(m_moveCard, "geometry");
-	////设置时间间隔，单位毫秒
-	//animation1->setDuration(10);
-	////创建起始位置
-	//animation1->setStartValue(QRect(this->x(), this->y(), this->width(), this->height()));
-	////创建结束位置
-	//animation1->setEndValue(QRect(this->x(), this->y() + y, this->width(), this->height()));
-	////设置缓和曲线，QEasingCurve::OutBounce 为弹跳效果    
-	//animation1->setEasingCurve(QEasingCurve::OutBounce);
-	////开始执行动画
-	//animation1->start();
-}
+//void gamePanel::zoomY(int y)
+//{
+//	////创建动画对象
+//	//QPropertyAnimation* animation1 = new QPropertyAnimation(m_moveCard, "geometry");
+//	////设置时间间隔，单位毫秒
+//	//animation1->setDuration(10);
+//	////创建起始位置
+//	//animation1->setStartValue(QRect(this->x(), this->y(), this->width(), this->height()));
+//	////创建结束位置
+//	//animation1->setEndValue(QRect(this->x(), this->y() + y, this->width(), this->height()));
+//	////设置缓和曲线，QEasingCurve::OutBounce 为弹跳效果    
+//	//animation1->setEasingCurve(QEasingCurve::OutBounce);
+//	////开始执行动画
+//	//animation1->start();
+//}
 
 void gamePanel::disposCard(Player* player, Cards& cards)
 {
@@ -638,13 +639,24 @@ QPixmap gamePanel::loadRoleImage(Player::Sex sex, Player::Direction direct, Play
 
 void gamePanel::showEndingScorePanel()
 {
-	QTimer::singleShot(2000, this, [&]() {
+	QTimer::singleShot(1000, this, [&]() {
 		bool isLord = m_gameCtl->getUserPlayer()->getRole() == Player::LANDLORD ? true : false;
 		bool isWin = m_gameCtl->getUserPlayer()->getIsWin();
+		//// 使用 unique_ptr 管理 EndingPanel 对象的生命周期
+		//std::unique_ptr<EndingPanel> panel=std::make_unique<EndingPanel>(isLord, isWin, this);
+		//panel->setParent(nullptr);
 		EndingPanel* panel = new EndingPanel(isLord, isWin, this);
-		panel->move((width() - panel->width()) / 2, (height() - panel->height()) / 2);
 		panel->show();
+		panel->move((width() - panel->width()) / 2, -panel->height());
+		panel->zoomY((height() - panel->height()) / 2 + panel->height());
 		panel->setMyScore(m_gameCtl->getLeftRobot()->getScore(), m_gameCtl->getRightRobot()->getScore(), m_gameCtl->getUserPlayer()->getScore());
+		connect(panel, &EndingPanel::continueGame, this, [=]() {
+			panel->close(); // 只需要关闭窗口
+			panel->deleteLater();
+			ui.buttonGroup->selectPanel(ButtonGroup::EMPTY);
+			gameStatusProcess(GameControl::DISPATCHCARD);
+			// 当 lambda 表达式结束时，panel 会超出作用域，std::unique_ptr 自动删除 EndingPanel 对象
+			});
 		});
 }
 

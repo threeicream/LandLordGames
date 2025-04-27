@@ -50,7 +50,7 @@ public:
 	void onDispatchCard();
 	//移动扑克牌
 	void cardMoveStep(Player* player, int curPos);
-	void zoomY(int y);
+	/*void zoomY(int y);*/
 	//处理分发得到的牌
 	void disposCard(Player* player,Cards& cards);
 	//更新扑克牌在窗口的显示
