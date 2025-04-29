@@ -233,7 +233,7 @@ Cards Strategy::firstPlay()
 		//1.飞机带两个对
 		bool twoPairFond = false;
 		QVector<Cards> pairArray;
-		for (Card::CardPoint point = Card::Card_3; point <= Card::Card_10; point = Card::CardPoint(point + 1)) {
+		for (Card::CardPoint point = Card::Card_3; point <= Card::Card_K; point = Card::CardPoint(point + 1)) {
 			Cards pair = Strategy(m_player, backup).findSamePointCards(point,2);
 			if (!pair.isEmpty()) {
 				pairArray.push_back(pair);
@@ -251,7 +251,7 @@ Cards Strategy::firstPlay()
 		else {//2.飞机带两个单
 			bool twoSingleFond = false;
 			QVector<Cards> singleArray;
-			for (Card::CardPoint point = Card::Card_3; point <= Card::Card_10; point = Card::CardPoint(point + 1)) {
+			for (Card::CardPoint point = Card::Card_3; point <= Card::Card_K; point = Card::CardPoint(point + 1)) {
 				if (backup.pointCount(point) == 1) {//确认这个点数的牌是否为单牌
 					Cards single = Strategy(m_player, backup).findSamePointCards(point, 1);
 					if (!single.isEmpty()) {
@@ -275,7 +275,7 @@ Cards Strategy::firstPlay()
 	}
 
 	if (hasTriple) {
-		if (PlayHand(seqTripleArray[0]).getPt() < Card::Card_J) {//点数过大就不出
+		if (PlayHand(seqTripleArray[0]).getPt() < Card::Card_A) {//点数过大就不出
 			for (Card::CardPoint point = Card::Card_3; point <= Card::Card_A; point = Card::CardPoint(point + 1)) {
 				int pointCount = backup.pointCount(point);
 				if (pointCount == 1) {
@@ -299,7 +299,17 @@ Cards Strategy::firstPlay()
 	//单牌或者对牌（不需要判断下家还有几张牌，因为是第一次出牌）
 	Player* nextPlayer = m_player->getNextPlayer();
 	if (m_player->getRole() != nextPlayer->getRole()) {
-		for (Card::CardPoint point = Card::Card_BJ; point >= Card::Card_3; point = Card::CardPoint(point - 1)) {
+		Card::CardPoint beginPoint;
+		Card::CardPoint endPoint;
+		if (nextPlayer->getCards().cardCount() < 4) {
+			beginPoint = m_player->getCards().maxPoint();
+			endPoint = m_player->getCards().minPoint();
+		}
+		else {
+			endPoint = m_player->getCards().minPoint();
+			beginPoint = m_player->getCards().minPoint();
+		}
+		for (Card::CardPoint point = beginPoint; point >= endPoint; point = Card::CardPoint(point - 1)) {
 			int pointCount = backup.pointCount(point);
 			if (pointCount == 1) {
 				Cards single = Strategy(m_player, backup).findSamePointCards(point, 1);
@@ -381,6 +391,7 @@ bool Strategy::whetherToBeat(Cards& card)
 	//得到出牌玩家的对象
 	Player* pendPlayer = m_player->getPendPlayer();
 	if (m_player->getRole() == pendPlayer->getRole()) {
+		penNum = 0;
 		//牌所剩无几且是一个完整牌型
 		Cards left = m_cards;
 		left.delCard(card);
@@ -391,10 +402,10 @@ bool Strategy::whetherToBeat(Cards& card)
 		Card::CardPoint basePoint = PlayHand(card).getPt();
 		if (basePoint >= Card::CardPoint::Card_2)
 			return false;
-		else{
+		else {
 			PlayHand myhand(card);
 			//如果card为3个2带1or1对，不出牌
-			if (myhand.getType() == PlayHand::Hand_Triple_Single || myhand.getType() == PlayHand::Hand_Triple_Pair 
+			if (myhand.getType() == PlayHand::Hand_Triple_Single || myhand.getType() == PlayHand::Hand_Triple_Pair
 				&& myhand.getPt() == Card::Card_2)
 				return false;
 			//如果card为对2，并且出牌玩家手牌>=10&&自己的牌>=5，暂时放弃出牌
@@ -403,6 +414,17 @@ bool Strategy::whetherToBeat(Cards& card)
 				return false;
 		}
 	}
+	else if (m_player->getNextPlayer()->getRole() == m_player->getRole() && m_player->getNextPlayer()->getCards().cardCount() < 5) {//队友牌很少
+		if (penNum >= 2)//队友一直不出牌
+			return true;
+		return false;
+	}
+	else if (m_player->getNextPlayer()->getRole() != m_player->getRole() && m_player->getNextPlayer()->getCards().cardCount() > 6) {
+		if (penNum >= 2)//队友一直不出牌
+			return true;
+		return false;
+	}
+	++penNum;
 	return true;
 }
 
@@ -623,6 +645,7 @@ Strategy::Strategy(Player* player, const Cards& cards)
 {
 	m_player = player;
 	m_cards = cards;
+	penNum = 0;
 }
 
 Strategy::~Strategy()

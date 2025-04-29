@@ -13,7 +13,7 @@ void PlayHand::classify(Cards& cards)
 	m_twoCard.clear();
 	m_threeCard.clear();
 	m_fourCard.clear();
-	for (int i = 0; i < Card::Card_End; ++i) {
+	for (int i = Card::Card_3; i < Card::Card_End; ++i) {
 		switch (cardRecord[i])
 		{
 		case 1:

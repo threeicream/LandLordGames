@@ -59,4 +59,5 @@ private:
 	Player* m_player;
 	Cards m_cards;
 	Cards ans;
+	int penNum;
 };
