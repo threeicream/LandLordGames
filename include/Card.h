@@ -1,5 +1,7 @@
 #pragma once
 #include <QVector>
+//#include <QMetaType>
+//#include <iterator>
 class Card;
 
 using CardLsit = QVector<Card>;
@@ -55,3 +57,7 @@ bool lessSort(const Card& a, const Card& b);
 bool greatorSort(const Card& a, const Card& b);
 
 uint qHash(const Card& card, uint seed = 0);//设置一个哈希键值
+
+//// 注册 CardPoint 和 CardSuit 到 Qt 的元对象系统
+//Q_DECLARE_METATYPE(Card::CardPoint)
+//Q_DECLARE_METATYPE(Card::CardSuit)

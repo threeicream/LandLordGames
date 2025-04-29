@@ -16,6 +16,7 @@
 #include "AnimationWindow.h"
 #include "PlayHand.h"
 #include "EndingPanel.h"
+#include "CountDown.h"
 
 gamePanel::gamePanel(QWidget *parent)
 	: QWidget(parent)
@@ -51,6 +52,8 @@ gamePanel::gamePanel(QWidget *parent)
 	//showEndingScorePanel();//测试
 
 	setMouseTracking(true); // 启用鼠标追踪
+	//11.倒计时初始化
+	CountDownInit();
 }
 
 gamePanel::~gamePanel()
@@ -418,7 +421,8 @@ void gamePanel::updatePlayerCards(Player* player)
 	CardLsit list = cards.toCardList();
 
 	m_cardsRect = QRect();
-	m_userCards.clear();
+	if(m_contextMap[player].align == HOR)
+		m_userCards.clear();
 	//取出展示扑克牌的区域
 	int cardSpace = 20;//牌之间的间隙
 	QRect cardsRect = m_contextMap[player].cardRect;
@@ -660,6 +664,29 @@ void gamePanel::showEndingScorePanel()
 		});
 }
 
+void gamePanel::CountDownInit()
+{
+	m_countDown = new CountDown(this);
+	connect(m_countDown, &CountDown::timeOut, this, [&]() {
+		qDebug() << QString("第%1次触发定时器").arg(ff++);
+		if (m_gameCtl->getPendPlayer() == m_gameCtl->getUserPlayer() || !m_gameCtl->getPendPlayer()) {
+			if (m_selectCards.isEmpty()) {
+				qDebug() << "user:" << m_userCards.keys().size();
+				m_selectCards.insert(m_userCards.keys()[0]);
+			}
+			onUserPlayHand();
+			m_selectCards.clear();
+		}
+		else {
+			if (!m_selectCards.isEmpty())
+				onUserPlayHand();
+			else
+				onUserPass();
+		}
+		});
+	connect(m_countDown, &CountDown::notMuchTime, this, [&]() {});
+}
+
 void gamePanel::onPlayerStatusChanged(Player* player, GameControl::PlayerStatus status)
 {
 	switch (status)
@@ -676,12 +703,18 @@ void gamePanel::onPlayerStatusChanged(Player* player, GameControl::PlayerStatus 
 		hidePlayerDropCards(player);
 
 		if (player == m_gameCtl->getUserPlayer()) {
+			//倒计时
+			m_countDown->showCountDown();
+			m_countDown->setFixedSize(70, 70);
+			m_countDown->move((width() - m_countDown->width()) / 2, (height() - m_countDown->height()) / 2 + 50);
 			//取出出牌玩家的对象
 			Player* penPlayer = m_gameCtl->getPendPlayer();
-			if (penPlayer == m_gameCtl->getUserPlayer() || !penPlayer)
+			if (penPlayer == m_gameCtl->getUserPlayer() || !penPlayer) {
 				ui.buttonGroup->selectPanel(ButtonGroup::PLAYCARD);
-			else
+			}
+			else {
 				ui.buttonGroup->selectPanel(ButtonGroup::PASSORPLAY);
+			}
 		}
 		else
 			ui.buttonGroup->selectPanel(ButtonGroup::EMPTY, m_gameCtl->getPlayerMaxBet());
@@ -788,7 +821,17 @@ void gamePanel::onUserPlayHand()
 	PlayHand hand(cs);
 	PlayHand::HandType type = hand.getType();
 	if (type == PlayHand::Hand_Unknown) {
-		return;
+		if (m_gameCtl->getPendPlayer() == m_gameCtl->getUserPlayer() || !m_gameCtl->getPendPlayer()) {
+			for (auto it : m_selectCards) {
+				it->setSelected(false);
+			}
+			m_selectCards.clear();
+			m_selectCards.insert(m_userCards.keys()[0]);
+			onUserPlayHand();
+			return;
+		}
+		else
+			onUserPass();
 	}
 	//判断当前玩家的牌能否压住上一个出牌玩家的牌
 	if (m_gameCtl->getPendPlayer() != m_gameCtl->getUserPlayer()) {
@@ -801,6 +844,8 @@ void gamePanel::onUserPlayHand()
 	m_gameCtl->getUserPlayer()->playHand(cs);
 	//清空容器
 	m_selectCards.clear();
+
+	m_countDown->stopCountDown();
 }
 
 void gamePanel::onUserPass()
@@ -827,6 +872,8 @@ void gamePanel::onUserPass()
 	m_selectCards.clear();
 	//更新玩家待出牌区域的牌
 	updatePlayerCards(m_gameCtl->getUserPlayer());
+
+	m_countDown->stopCountDown();
 }
 
 void gamePanel::paintEvent(QPaintEvent* event)

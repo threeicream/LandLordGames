@@ -1,6 +1,33 @@
 #include "Strategy.h"
 #include <QMap>
 #include <QDebug>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QTextCursor> // For appending text
+#include <QProcess>
+#include <QJsonArray>
+
+// (可选) 实现 cardPointToString 函数，用于将 Card::CardPoint 转换为字符串
+QString cardPointToString(Card::CardPoint point) {
+	switch (point) {
+	case Card::Card_3: return "Card_3";
+	case Card::Card_4: return "Card_4";
+	case Card::Card_5: return "Card_5";
+	case Card::Card_6: return "Card_6";
+	case Card::Card_7: return "Card_7";
+	case Card::Card_8: return "Card_8";
+	case Card::Card_9: return "Card_9";
+	case Card::Card_10: return "Card_10";
+	case Card::Card_J: return "Card_J";
+	case Card::Card_Q: return "Card_Q";
+	case Card::Card_K: return "Card_K";
+	case Card::Card_A: return "Card_A";
+	case Card::Card_2: return "Card_2";
+	case Card::Card_SJ: return "Card_SJ";
+	case Card::Card_BJ: return "Card_BJ";
+	default: return ""; // 或者抛出异常
+	}
+}
 
 Cards Strategy::makeStrategy()
 {
@@ -24,6 +51,119 @@ Cards Strategy::makeStrategy()
 			return Cards();
 	}
 	return Cards();
+}
+
+void Strategy::makeStrategyApi()
+{
+	////得到出牌玩家对象以及打出的牌
+	//QString myPlayer = m_player->getRole() == Player::FARMER ? "农民" : "地主";
+	//QString penPlayer = m_player->getPendPlayer()->getRole() == Player::FARMER ? "农民" : "地主";
+	//Cards cards = m_player->getPendCards();
+	//QVector<Card::CardPoint> penCards = getApiCards(cards);
+	//QVector<Card::CardPoint> myCards = getApiCards(m_cards);
+
+	//// 字符串到 CardPoint 的映射
+	//QMap<QString, Card::CardPoint> stringToCardPointMap;
+	//stringToCardPointMap["Card_3"] = Card::Card_3;
+	//stringToCardPointMap["Card_4"] = Card::Card_4;
+	//stringToCardPointMap["Card_5"] = Card::Card_5;
+	//stringToCardPointMap["Card_6"] = Card::Card_6;
+	//stringToCardPointMap["Card_7"] = Card::Card_7;
+	//stringToCardPointMap["Card_8"] = Card::Card_8;
+	//stringToCardPointMap["Card_9"] = Card::Card_9;
+	//stringToCardPointMap["Card_10"] = Card::Card_10;
+	//stringToCardPointMap["Card_J"] = Card::Card_J;
+	//stringToCardPointMap["Card_Q"] = Card::Card_Q;
+	//stringToCardPointMap["Card_K"] = Card::Card_K;
+	//stringToCardPointMap["Card_A"] = Card::Card_A;
+	//stringToCardPointMap["Card_2"] = Card::Card_2;
+	//stringToCardPointMap["Card_SJ"] = Card::Card_SJ;
+	//stringToCardPointMap["Card_BJ"] = Card::Card_BJ;
+
+	//// 1. 构建要传递给 JavaScript 的 JSON 数据(假设你已经有了 myPlayer, penPlayer, penCards, myCards 这些变量)
+	//QJsonObject requestData;
+	//requestData["my_role"] = myPlayer; // 假设 myPlayer 已经是 "农民" 或 "地主" 字符串
+	//requestData["pen_player_role"] = penPlayer; // 假设 penPlayer 已经是 "农民" 或 "地主" 字符串
+	//// 将 QVector<Card::CardPoint> 转换为 QJsonArray
+	//QJsonArray penCardsArray;
+	//for (const auto& card : penCards) {
+	//	penCardsArray.append(cardPointToString(card)); //  需要实现 cardPointToString 函数
+	//}
+	//requestData["pen_cards_value"] = penCardsArray;
+	//QJsonArray myCardsArray;
+	//for (const auto& card : myCards) {
+	//	myCardsArray.append(cardPointToString(card)); //  需要实现 cardPointToString 函数
+	//}
+	//requestData["my_cards_value"] = myCardsArray;
+	////假设已经有了 hasGreaterCards 变量，表示是否有更大的牌
+	//requestData["has_greater_cards"] = true; // 示例，需要根据实际情况设置
+	//QJsonDocument doc(requestData);
+	//QString question = doc.toJson(QJsonDocument::Compact);
+	//// 2. 构建 Node.js 命令
+	//QString nodeExecutable = "node"; // 假设 node 可执行文件在 PATH 环境变量中
+	//QString scriptPath = "D:/Vs/project/APItest/nodejs_api/deepseek_api.js"; // 替换为你的 JavaScript 文件的路径
+	//QStringList arguments;
+	//arguments << scriptPath << question; // 将问题作为参数传递给 Node.js
+	//// 3. 创建 QProcess 对象
+	//QProcess* process = new QProcess();
+	//// 4. 连接 readyReadStandardOutput 信号和槽函数，用于读取 Node.js 进程的输出
+	//QObject::connect(process, &QProcess::readyReadStandardOutput, [=]() {
+	//	QByteArray output = process->readAllStandardOutput();
+	//	QString outputString = QString::fromUtf8(output);
+	//	qDebug() << "Node.js output:" << outputString;
+	//	// 5. 解析 Node.js 进程的输出 (假设输出是 JSON 格式的 QVector<Card::CardPoint> 数组)
+	//	QJsonParseError error;
+	//	QJsonDocument jsonDoc = QJsonDocument::fromJson(outputString.toUtf8(), &error);
+	//	if (error.error != QJsonParseError::NoError) {
+	//		qDebug() << "JSON parse error:" << error.errorString();
+	//		// 处理 JSON 解析错误
+	//		// 可以设置一个默认的 QVector<Card::CardPoint> 作为备用
+	//		return;
+	//	}
+	//	if (!jsonDoc.isArray()) {
+	//		qDebug() << "JSON is not an array!";
+	//		// 处理 JSON 格式错误
+	//		return;
+	//	}
+	//	QJsonArray jsonArray = jsonDoc.array();
+	//	QVector<Card::CardPoint> cardsToPlay;
+	//	//假设已经有了字符串到 CardPoint 的映射: stringToCardPointMap
+	//	for (int i = 0; i < jsonArray.size(); ++i) {
+	//		QString cardString = jsonArray[i].toString();
+	//		if (stringToCardPointMap.contains(cardString)) {
+	//			cardsToPlay.append(stringToCardPointMap[cardString]);
+	//		}
+	//		else {
+	//			qDebug() << "Invalid card string: " << cardString;
+	//			// 处理无效的卡牌字符串，可以选择忽略或使用默认值
+	//		}
+	//	}
+	//	// 6. 使用 cardsToPlay (包含要出的牌的 QVector<Card::CardPoint>)
+	//	qDebug() << "Cards to play: " << cardsToPlay;
+
+	//	// 发射信号，将 cardsToPlay 传递出去
+	//	Cards toCards(convertCardsToPlay(cardsToPlay));
+	//	emit cardsToPlayReady(toCards);
+
+	//	// 7. 清理 QProcess 对象 (重要!)
+	//	process->deleteLater(); // 使用 deleteLater，确保在事件循环中删除对象
+	//	});
+	//// 8. 连接 finished 信号，处理进程结束事件
+	//QObject::connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+	//	[=](int exitCode, QProcess::ExitStatus exitStatus) {
+	//		qDebug() << "Node.js process finished with exit code:" << exitCode << " and exit status:" << exitStatus;
+	//		if (exitStatus != QProcess::NormalExit) {
+	//			qDebug() << "Node.js process exited with an error!";
+	//			QByteArray errorOutput = process->readAllStandardError();
+	//			QString errorString = QString::fromUtf8(errorOutput);
+	//			qDebug() << "Node.js error output:" << errorString;
+	//			// 处理 Node.js 进程的错误输出
+	//		}
+	//	});
+	//// 9. 启动 Node.js 进程
+	//process->start(nodeExecutable, arguments);
+
+	////return ans;
 }
 
 Cards Strategy::firstPlay()
@@ -75,8 +215,8 @@ Cards Strategy::firstPlay()
 		backup.delCard(seqPairArray);
 	}
 
-	int maxNum = INT_MIN;
-	int seq = 0;
+	//int maxNum = INT_MIN;
+	//int seq = 0;
 	if (hasPair) {
 		Cards maxPair;
 		for (int i = 0; i < seqPairArray.size(); ++i)
@@ -661,4 +801,38 @@ QVector<Cards> Strategy::getBomb(Card::CardPoint begin)
 		}
 	}
 	return findcardsArray;
+}
+
+QVector<Card::CardPoint> Strategy::getApiCards(Cards& cards)
+{
+	CardLsit res = cards.toCardList();
+	QVector<Card::CardPoint>ans;
+	for (auto& it : res) {
+		ans.append(it.getPoint());
+	}
+	return ans;
+}
+
+Cards Strategy::convertCardsToPlay(const QVector<Card::CardPoint>& cardsToPlay)
+{
+	Cards toCards;
+	for (const auto& cardPoint : cardsToPlay) {
+		bool found = false; // 标记是否在 m_cards 中找到了匹配的 Card 对象
+		// 遍历 m_cards (QSet<Card>)
+		for (const auto& cardInMcards : m_cards) {
+			// 比较点数是否相同
+			if (cardInMcards.getPoint() == cardPoint) {
+				// 找到了匹配的 Card 对象，添加到 toCards 中
+				toCards.addCard(cardInMcards);
+				found = true;
+				break; // 找到一个就停止查找，因为 QSet 中不应该有相同点数和花色的牌
+			}
+		}
+		// 处理未找到的情况 (可选)
+		if (!found) {
+			qDebug() << "Warning: Card with point " << cardPoint << " not found in m_cards!";
+			// 你可以选择忽略它，或者记录一个错误，或者采取其他处理方式
+		}
+	}
+	return toCards;
 }

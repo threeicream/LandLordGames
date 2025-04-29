@@ -29,7 +29,10 @@ void robotGrapLord::workGrapLord()
 
 void robotGrapLord::workPlayHand()
 {
-	QTimer::singleShot(2000, this, [&]() {m_player->thinkPlayHand(); });
+	QTimer::singleShot(2000, this, [&]() {
+		m_player->thinkPlayHand(); 
+		//m_player->thinkPlayHand_api();
+		});
 }
 
 robotGrapLord::robotGrapLord(Robot* player, QObject* parent)

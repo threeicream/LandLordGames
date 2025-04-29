@@ -10,6 +10,7 @@
 #include "Cards.h"
 #include "GameControl.h"
 #include <QSet>
+class CountDown;
 class QPaintEvent;
 class Player;
 class CardPanel;
@@ -65,8 +66,10 @@ public:
 	void hidePlayerDropCards(Player* player);
 	//加载玩家头像
 	QPixmap loadRoleImage(Player::Sex sex, Player::Direction direct, Player::Role role);
-	//显示顽疾最终得分
+	//显示玩家最终得分
 	void showEndingScorePanel();
+	//初始化闹钟
+	void CountDownInit();
 	
 public slots:
 	//处理玩家状态的变化
@@ -84,13 +87,13 @@ protected:
 
 	virtual void mouseMoveEvent(QMouseEvent* event)override;
 
-	//virtual void mousePressEvent(QMouseEvent* event) override {
-	//	QPoint pos = event->pos(); // 获取相对于窗口客户区域的坐标
-	//	qDebug() << "Mouse pressed at:" << pos;
-	//	// 如果你想获取相对于屏幕的坐标，可以使用 event->globalPos()
-	//	QPoint globalPos = event->globalPos();
-	//	qDebug() << "Mouse pressed at (global):" << globalPos;
-	//}
+	virtual void mousePressEvent(QMouseEvent* event) override {
+		QPoint pos = event->pos(); // 获取相对于窗口客户区域的坐标
+		qDebug() << "Mouse pressed at:" << pos;
+		// 如果你想获取相对于屏幕的坐标，可以使用 event->globalPos()
+		QPoint globalPos = event->globalPos();
+		qDebug() << "Mouse pressed at (global):" << globalPos;
+	}
 private:
 	Ui::gamePanel ui;
 private:
@@ -128,4 +131,6 @@ private:
 	QSet<CardPanel*>m_selectCards;//选择的牌
 	QRect m_cardsRect;//出牌区域
 	QHash<CardPanel*, QRect>m_userCards;
+	CountDown* m_countDown = nullptr;
+	int ff = 1;
 };

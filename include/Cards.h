@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QSet>//相当于unordered_set
 #include "Card.h"
+#include <iterator>
 	
 class Cards
 {
@@ -47,6 +48,14 @@ public:
 
 	//测试，输出cards的卡牌点数
 	void getAllCardsPoint();
+
+	// 迭代器支持
+	QSet<Card>::iterator begin() { return m_cards.begin(); }
+	QSet<Card>::iterator end() { return m_cards.end(); }
+	QSet<Card>::const_iterator begin() const { return m_cards.begin(); }
+	QSet<Card>::const_iterator end() const { return m_cards.end(); }
+	QSet<Card>::const_iterator cbegin() const { return m_cards.cbegin(); }
+	QSet<Card>::const_iterator cend() const { return m_cards.cend(); }
 
 public:
 	Cards();

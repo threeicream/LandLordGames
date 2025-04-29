@@ -7,6 +7,7 @@ class Strategy
 public:
 	//1. 制定出牌策略
 	Cards makeStrategy();
+	void makeStrategyApi();
 	// 2. 第一个出牌 firstPlay
 	Cards firstPlay();
 	// 3. 得到比指定牌型大的牌
@@ -30,6 +31,8 @@ public:
 public:
 	Strategy(Player* player, const Cards& cards);
 	~Strategy();
+signals:
+	void cardsToPlayReady(Cards cards);
 private:
 	using function = Cards(Strategy::*)(Card::CardPoint point);
 	struct CardInfo {
@@ -49,7 +52,11 @@ private:
 	Cards getBaseSeqPair(Card::CardPoint point);
 	Cards getBaseSeqSingle(Card::CardPoint point);
 	QVector<Cards>getBomb(Card::CardPoint begin);
+	QVector<Card::CardPoint>getApiCards(Cards& cards);
+
+	Cards convertCardsToPlay(const QVector<Card::CardPoint>& cardsToPlay);
 private:
 	Player* m_player;
 	Cards m_cards;
+	Cards ans;
 };

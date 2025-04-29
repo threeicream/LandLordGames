@@ -62,6 +62,7 @@ EndingPanel::EndingPanel(bool isLord, bool isWin, QWidget *parent)
 
 EndingPanel::~EndingPanel()
 {
+	qDebug() << "EndingPanel::~EndingPanel() called";
 }
 
 void EndingPanel::setMyScore(int left, int right, int user)

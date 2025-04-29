@@ -128,10 +128,17 @@ void Robot::thinkPlayHand()
 	playHand(cs);
 }
 
+void Robot::thinkPlayHand_api()
+{
+	//str->makeStrategyApi();
+}
+
 Robot::Robot(QObject *parent)
 	: Player(parent)
 {
 	this->m_tyep = Player::ROBOT;
+	//str = new Strategy(this, m_cards);
+	//connect(str, &Strategy::cardsToPlayReady, this, &Robot::playHand);
 }
 
 Robot::~Robot()
