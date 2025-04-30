@@ -2,7 +2,7 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // 从环境变量中获取 Gemini API 密钥
-const geminiApiKey = 'AIzaSyDH4ehZFCcvYSxjE63qu3oDRvE1Fj89hzk';//process.env.GEMINI_API_KEY;
+const geminiApiKey = 't';//process.env.GEMINI_API_KEY;
 
 // 检查 API 密钥是否已设置
 if (!geminiApiKey) {

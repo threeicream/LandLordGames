@@ -2,7 +2,7 @@ import OpenAI from "openai";
 
 // 配置常量
 const DEEPSEEK_API_BASE_URL = 'https://api.deepseek.com';
-const DEEPSEEK_API_KEY = 'sk-6bf9b7e6043f419e9f04de6b4ea65f4c'; // 替换成你的 API Key
+const DEEPSEEK_API_KEY = 't'; // 替换成你的 API Key
 const DEEPSEEK_MODEL_NAME = "deepseek-chat";
 const FALLBACK_STRATEGY = []; // Default to not playing if API fails (empty array).  Adjust based on your game's requirements.
 
