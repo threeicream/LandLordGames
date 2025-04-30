@@ -20,6 +20,7 @@ public:
 	Cards findSamePointCards(Card::CardPoint point, int count);
 	// 6. 找出所有点数数量为count的牌 ==> 得到一个多张扑克牌数组
 	QVector<Cards> findCardsByCount(int count);
+	QVector<Cards>findJoker();
 	// 7. 根据点数范围找牌
 	Cards findRangeCards(Card::CardPoint begin, Card::CardPoint end);
 	// 8. 按牌型找牌， 并且指定要找的牌是否要大过指定的牌型

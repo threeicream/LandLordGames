@@ -343,12 +343,36 @@ Cards Strategy::getGreaterCards(PlayHand type)
 	//1.出牌玩家和当前玩家阵营不一致
 	Player* penPlayer = m_player->getPendPlayer();
 	if (penPlayer->getRole() != m_player->getRole() && penPlayer->getCards().cardCount() <= 3) {
+		//试图拆手牌
+		Card::CardPoint beginPoint;
+		Card::CardPoint endPoint;
+		beginPoint = m_player->getCards().maxPoint();
+		endPoint = m_player->getCards().minPoint();
+
+		for (Card::CardPoint point = beginPoint; point >= endPoint; point = Card::CardPoint(point - 1)) {
+			if (type.getType() == PlayHand::Hand_Single) {
+				Cards single = Strategy(m_player, m_cards).findSamePointCards(point, 1);
+				return single;
+			}
+			else if (type.getType() == PlayHand::Hand_Pair) {
+				Cards pair = Strategy(m_player, m_cards).findSamePointCards(point, 2);
+				return pair;
+			}
+		}
+
+		//直接炸弹
 		QVector<Cards>bombs = findCardsByCount(4);
 		for (int i = 0; i < bombs.size(); ++i) {
 			PlayHand hand(bombs[i]);
 			if (hand.canBeat(type)) {
 				return bombs[i];
 			}
+		}
+		QVector<Cards>JokerBomb = findJoker();
+		if (JokerBomb.size() == 2) {
+			Cards cs = JokerBomb[0];
+			cs << JokerBomb[1];
+			return cs;
 		}
 	}
 	//2.下一个玩家和当前玩家阵营不一致
@@ -485,6 +509,14 @@ QVector<Cards> Strategy::findCardsByCount(int count)
 			cardsArray << cs;
 		}
 	}
+	return cardsArray;
+}
+
+QVector<Cards> Strategy::findJoker()
+{
+	QVector<Cards>cardsArray;
+	cardsArray << findSamePointCards(Card::Card_SJ, 1);
+	cardsArray << findSamePointCards(Card::Card_BJ, 1);
 	return cardsArray;
 }
 
