@@ -296,14 +296,15 @@ Cards Strategy::firstPlay()
 		return seqTripleArray[0];
 	}
 
-	//单牌或者对牌（不需要判断下家还有几张牌，因为是第一次出牌）
+	//单牌或者对牌
 	Player* nextPlayer = m_player->getNextPlayer();
 	if (m_player->getRole() != nextPlayer->getRole()) {
 		Card::CardPoint beginPoint;
 		Card::CardPoint endPoint;
-		if (nextPlayer->getCards().cardCount() < 4) {
+		if (nextPlayer->getCards().cardCount() < 4) {//如果下家只剩三张牌
 			beginPoint = m_player->getCards().maxPoint();
 			endPoint = m_player->getCards().minPoint();
+			//beginPoint = static_cast<Card::CardPoint>(beginPoint - (beginPoint - endPoint) / 2);
 		}
 		else {
 			endPoint = m_player->getCards().minPoint();
@@ -414,13 +415,15 @@ bool Strategy::whetherToBeat(Cards& card)
 				return false;
 		}
 	}
-	else if (m_player->getNextPlayer()->getRole() == m_player->getRole() && m_player->getNextPlayer()->getCards().cardCount() < 5) {//队友牌很少
+	else if (m_player->getNextPlayer()->getRole() == m_player->getRole() && m_player->getNextPlayer()->getCards().cardCount() < 5) {//下家队友，且队友牌很少
 		if (penNum >= 2)//队友一直不出牌
 			return true;
 		return false;
 	}
-	else if (m_player->getNextPlayer()->getRole() != m_player->getRole() && m_player->getNextPlayer()->getCards().cardCount() > 6) {
+	else if (m_player->getNextPlayer()->getRole() != m_player->getRole() && m_player->getNextPlayer()->getCards().cardCount() > 6) {//下家敌对，且牌很多
 		if (penNum >= 2)//队友一直不出牌
+			return true;
+		if (pendPlayer->getCards().cardCount() > 9)//队友牌很多
 			return true;
 		return false;
 	}

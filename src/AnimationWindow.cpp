@@ -19,6 +19,24 @@ void AnimationWindow::showBetScore(int bet)
 	QTimer::singleShot(2000, this, &AnimationWindow::hide);
 }
 
+void AnimationWindow::showSequenceAndPair(Type type)
+{
+	switch (type)
+	{
+	case AnimationWindow::Sequence:
+		m_image.load(QString(":/LordGame/image/shunzi.png"));
+		break;
+	case AnimationWindow::Pair:
+		m_image.load(QString(":/LordGame/image/liandui.png"));
+		break;
+	default:
+		break;
+	}
+	update();
+
+	QTimer::singleShot(2000, this, &AnimationWindow::hide);
+}
+
 void AnimationWindow::paintEvent(QPaintEvent* event)
 {
 	QPainter painter(this);

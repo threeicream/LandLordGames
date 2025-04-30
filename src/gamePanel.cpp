@@ -561,8 +561,16 @@ void gamePanel::showAnimation(AnimationType type, int bet)
 	switch (type)
 	{
 	case gamePanel::SHUNZI:
+		m_animation->setFixedSize(250, 150);
+		m_animation->move((width() - m_animation->width()) / 2, (height() - m_animation->height()) / 2 - 140);
+		m_animation->showSequenceAndPair(AnimationWindow::Sequence);
+		m_animation->show();
 		break;
 	case gamePanel::LIANDUI:
+		m_animation->setFixedSize(250, 150);
+		m_animation->move((width() - m_animation->width()) / 2, (height() - m_animation->height()) / 2 - 140);
+		m_animation->showSequenceAndPair(AnimationWindow::Pair);
+		m_animation->show();
 		break;
 	case gamePanel::PLANE:
 		break;
@@ -840,16 +848,17 @@ void gamePanel::onUserPlayHand()
 			return;
 		}
 	}
+
+	m_countDown->stopCountDown();
 	//通过玩家对象出牌
 	m_gameCtl->getUserPlayer()->playHand(cs);
 	//清空容器
 	m_selectCards.clear();
-
-	m_countDown->stopCountDown();
 }
 
 void gamePanel::onUserPass()
 {
+	m_countDown->stopCountDown();
 	//判断游戏状态是否为出牌状态
 	if (m_gameStatus != GameControl::PLAYINGHAND) {
 		return;
@@ -872,8 +881,6 @@ void gamePanel::onUserPass()
 	m_selectCards.clear();
 	//更新玩家待出牌区域的牌
 	updatePlayerCards(m_gameCtl->getUserPlayer());
-
-	m_countDown->stopCountDown();
 }
 
 void gamePanel::paintEvent(QPaintEvent* event)
