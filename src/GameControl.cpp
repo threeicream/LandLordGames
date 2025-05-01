@@ -164,8 +164,13 @@ void GameControl::onPlayHand(Player* player, Cards& cards)
 	if (!cards.isEmpty()) {
 		m_pendCards = cards;
 		m_pendPlayer = player;
+		player->setPass(false);
 		emit pendingInfo(player, cards);
 	}
+	else {
+		player->setPass(true);
+	}
+
 	//如果有炸弹，翻倍底分
 	PlayHand::HandType type = PlayHand(cards).getType();
 	if (type == PlayHand::Hand_Bomb || type == PlayHand::Hand_Bomb_Jokers) {

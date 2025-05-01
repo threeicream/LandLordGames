@@ -61,8 +61,16 @@ public:
 	Player* getPendPlayer()const;
 	Cards getPendCards()const;
 
+	//设置队友玩家
+	Player* getTeamPlayer()const;
+	Cards getTeamCards()const;
+
 	//存储出牌玩家对象和打出的牌
 	void storePendingInfo(Player* player, const Cards& cards);
+
+	//是否出牌
+	void setPass(bool pass);
+	bool getPass();
 
 	//虚函数
 	virtual void prepareCallLord();
@@ -91,4 +99,5 @@ protected:
 	Cards m_cards;//存储玩家牌
 	Cards m_pendCards;
 	Player* m_pendPlayer = nullptr;
+	bool m_pass;
 };

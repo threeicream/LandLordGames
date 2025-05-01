@@ -44,6 +44,12 @@ Cards Strategy::makeStrategy()
 		PlayHand type(penCards);
 		Cards beatCards = getGreaterCards(type);
 		//找到点数大的牌后考虑是否出牌
+		if (m_player->getTeamPlayer() && m_player->getTeamPlayer()->getPass()) {
+			++penNum;
+		}
+		else
+			penNum = 0;
+		qDebug() << m_player->getName() << QString(":") << penNum;
 		bool shouldBeat = whetherToBeat(beatCards);
 		if (shouldBeat)
 			return beatCards;
@@ -298,18 +304,14 @@ Cards Strategy::firstPlay()
 
 	//单牌或者对牌
 	Player* nextPlayer = m_player->getNextPlayer();
-	if (m_player->getRole() != nextPlayer->getRole()) {
-		Card::CardPoint beginPoint;
-		Card::CardPoint endPoint;
-		if (nextPlayer->getCards().cardCount() < 4) {//如果下家只剩三张牌
-			beginPoint = m_player->getCards().maxPoint();
-			endPoint = m_player->getCards().minPoint();
-			//beginPoint = static_cast<Card::CardPoint>(beginPoint - (beginPoint - endPoint) / 2);
-		}
-		else {
-			endPoint = m_player->getCards().minPoint();
-			beginPoint = m_player->getCards().minPoint();
-		}
+	Card::CardPoint beginPoint;
+	Card::CardPoint endPoint;
+	beginPoint = m_player->getCards().minPoint();
+	endPoint = m_player->getCards().maxPoint();
+	if (m_player->getRole() != nextPlayer->getRole() && nextPlayer->getCards().cardCount() < 4) {//如果下家只剩三张牌
+		beginPoint = m_player->getCards().maxPoint();
+		endPoint = m_player->getCards().minPoint();
+		//beginPoint = static_cast<Card::CardPoint>(beginPoint - (beginPoint - endPoint) / 2);
 		for (Card::CardPoint point = beginPoint; point >= endPoint; point = Card::CardPoint(point - 1)) {
 			int pointCount = backup.pointCount(point);
 			if (pointCount == 1) {
@@ -323,7 +325,7 @@ Cards Strategy::firstPlay()
 		}
 	}
 	else {
-		for (Card::CardPoint point = Card::Card_3; point <= Card::Card_BJ; point = Card::CardPoint(point + 1)) {
+		for (Card::CardPoint point = beginPoint; point <= endPoint; point = Card::CardPoint(point + 1)) {
 			int pointCount = backup.pointCount(point);
 			if (pointCount == 1) {
 				Cards single = Strategy(m_player, backup).findSamePointCards(point, 1);
@@ -343,22 +345,6 @@ Cards Strategy::getGreaterCards(PlayHand type)
 	//1.出牌玩家和当前玩家阵营不一致
 	Player* penPlayer = m_player->getPendPlayer();
 	if (penPlayer->getRole() != m_player->getRole() && penPlayer->getCards().cardCount() <= 3) {
-		//试图拆手牌
-		Card::CardPoint beginPoint;
-		Card::CardPoint endPoint;
-		beginPoint = m_player->getCards().maxPoint();
-		endPoint = m_player->getCards().minPoint();
-
-		for (Card::CardPoint point = beginPoint; point >= endPoint; point = Card::CardPoint(point - 1)) {
-			if (type.getType() == PlayHand::Hand_Single) {
-				Cards single = Strategy(m_player, m_cards).findSamePointCards(point, 1);
-				return single;
-			}
-			else if (type.getType() == PlayHand::Hand_Pair) {
-				Cards pair = Strategy(m_player, m_cards).findSamePointCards(point, 2);
-				return pair;
-			}
-		}
 
 		//直接炸弹
 		QVector<Cards>bombs = findCardsByCount(4);
@@ -368,12 +354,9 @@ Cards Strategy::getGreaterCards(PlayHand type)
 				return bombs[i];
 			}
 		}
-		QVector<Cards>JokerBomb = findJoker();
-		if (JokerBomb.size() == 2) {
-			Cards cs = JokerBomb[0];
-			cs << JokerBomb[1];
-			return cs;
-		}
+		Cards JokerBomb = findRangeCards(Card::Card_SJ, Card::Card_BJ);
+		if (JokerBomb.cardCount() == 2)
+			return JokerBomb;
 	}
 	//2.下一个玩家和当前玩家阵营不一致
 	Player* nextPlayer = m_player->getNextPlayer();
@@ -382,18 +365,18 @@ Cards Strategy::getGreaterCards(PlayHand type)
 	remain.delCard(Strategy(m_player, remain).pickOptimalSeqSingle());//移除顺子
 
 	QVector<Cards>beatCardsArray = Strategy(m_player, remain).findCardType(type, true);
-	if (!beatCardsArray.isEmpty()) {
-		if (nextPlayer->getRole() != m_player->getRole() && nextPlayer->getCards().cardCount() <= 2) {
+	if (!beatCardsArray.isEmpty()) {//不拆手牌
+		if (nextPlayer->getRole() != m_player->getRole() && nextPlayer->getCards().cardCount() <= 3) {
 			return beatCardsArray.back();
 		}
 		else {
 			return beatCardsArray.front();
 		}
 	}
-	else {
+	else {//拆手牌
 		QVector<Cards>beatCardsArray1 = Strategy(m_player, m_cards).findCardType(type, true);
 		if (!beatCardsArray1.isEmpty()) {
-			if (nextPlayer->getRole() != m_player->getRole() && nextPlayer->getCards().cardCount() <= 2) {
+			if (nextPlayer->getRole() != m_player->getRole() && nextPlayer->getCards().cardCount() <= 3) {
 				return beatCardsArray1.back();
 			}
 			else {
@@ -411,12 +394,20 @@ Cards Strategy::getGreaterCards_api(PlayHand type)
 
 bool Strategy::whetherToBeat(Cards& card)
 {
-	if (card.isEmpty())
-		return false;
 	//得到出牌玩家的对象
 	Player* pendPlayer = m_player->getPendPlayer();
+	if (card.isEmpty())
+		return false;
+
+	if (m_player->getRole() == Player::LANDLORD) {
+		if (card.minPoint() >= Card::Card_A && pendPlayer->getCards().cardCount() >= 6) {//如果出牌玩家牌很大，且牌很多
+			return false;
+		}
+		else
+		return true;
+	}
+
 	if (m_player->getRole() == pendPlayer->getRole()) {
-		penNum = 0;
 		//牌所剩无几且是一个完整牌型
 		Cards left = m_cards;
 		left.delCard(card);
@@ -437,21 +428,24 @@ bool Strategy::whetherToBeat(Cards& card)
 			if (myhand.getType() == PlayHand::Hand_Pair && myhand.getPt() == Card::Card_2
 				&& pendPlayer->getCards().cardCount() >= 10 && m_player->getCards().cardCount() >= 5)
 				return false;
+			//如果出牌玩家手牌<=5&&自己手牌>=5，放弃出牌
+			if (pendPlayer->getCards().cardCount() <= 5 && m_player->getCards().cardCount() >= 5)
+				return false;
 		}
 	}
-	else if (m_player->getNextPlayer()->getRole() == m_player->getRole() && m_player->getNextPlayer()->getCards().cardCount() < 5) {//下家队友，且队友牌很少
-		if (penNum >= 2)//队友一直不出牌
-			return true;
+
+	if (m_player->getNextPlayer()->getRole() == m_player->getRole() 
+		&& m_player->getNextPlayer()->getCards().cardCount() < 5 
+		&& penNum < 2) {//下家队友，且队友牌很少
 		return false;
 	}
-	else if (m_player->getNextPlayer()->getRole() != m_player->getRole() && m_player->getNextPlayer()->getCards().cardCount() > 6) {//下家敌对，且牌很多
-		if (penNum >= 2)//队友一直不出牌
-			return true;
-		if (pendPlayer->getCards().cardCount() > 9)//队友牌很多
-			return true;
+	else if (m_player->getNextPlayer()->getRole() != m_player->getRole() 
+		&& m_player->getNextPlayer()->getCards().cardCount() > 6 
+		&& penNum < 2) {//下家敌对，且牌很多
+		//if (pendPlayer->getCards().cardCount() >= 9)//队友牌很多
+		//	return true;
 		return false;
 	}
-	++penNum;
 	return true;
 }
 
@@ -512,14 +506,6 @@ QVector<Cards> Strategy::findCardsByCount(int count)
 	return cardsArray;
 }
 
-QVector<Cards> Strategy::findJoker()
-{
-	QVector<Cards>cardsArray;
-	cardsArray << findSamePointCards(Card::Card_SJ, 1);
-	cardsArray << findSamePointCards(Card::Card_BJ, 1);
-	return cardsArray;
-}
-
 Cards Strategy::findRangeCards(Card::CardPoint begin, Card::CardPoint end)
 {
 	Cards rangeCards;
@@ -562,7 +548,7 @@ QVector<Cards> Strategy::findCardType(PlayHand hand, bool beat)
 	{
 		CardInfo info;
 		info.begin = beginPoint;
-		info.end = Card::CardPoint::Card_Q;
+		info.end = Card::CardPoint::Card_Q;//最少三个
 		info.number = 2;
 		info.base = 3;
 		info.extra = extra;
@@ -574,7 +560,7 @@ QVector<Cards> Strategy::findCardType(PlayHand hand, bool beat)
 	{
 		CardInfo info;
 		info.begin = beginPoint;
-		info.end = Card::CardPoint::Card_10;
+		info.end = Card::CardPoint::Card_10;//最少五个
 		info.number = 1;
 		info.base = 5;
 		info.extra = extra;

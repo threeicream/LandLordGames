@@ -5,6 +5,7 @@ Player::Player(QObject *parent)
 {
 	m_score = 0;
 	m_isWin = false;
+	m_pass = false;
 }
 
 Player::Player(QString name, QObject* parent /*= nullptr*/)
@@ -158,10 +159,35 @@ Cards Player::getPendCards() const
 	return m_pendCards;
 }
 
+Player* Player::getTeamPlayer() const
+{
+	Player* ans;
+	if (this->getRole() == Player::LANDLORD)
+		return nullptr;
+	else
+		ans = this->getRole() == m_PrevPlayer->getRole() ? m_PrevPlayer : m_NextPlayer;
+	return ans;
+}
+
+Cards Player::getTeamCards() const
+{
+	return Cards();
+}
+
 void Player::storePendingInfo(Player* player, const Cards& cards)
 {
 	m_pendPlayer = player;
 	m_pendCards = cards;
+}
+
+void Player::setPass(bool pass)
+{
+	m_pass = pass;
+}
+
+bool Player::getPass()
+{
+	return m_pass;
 }
 
 void Player::prepareCallLord()//准备抢地主
