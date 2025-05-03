@@ -13,7 +13,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
  
  
-find_package(Qt6 COMPONENTS Widgets Core Gui REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Core Gui Multimedia REQUIRED)
  
 #设置要包含的目录
 include_directories(
@@ -60,4 +60,5 @@ target_link_libraries(${EXE}
         Qt6::Core
         Qt6::Gui
         Qt6::Widgets
+        Qt6::Multimedia
 )

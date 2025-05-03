@@ -585,7 +585,7 @@ void gamePanel::showAnimation(AnimationType type, int bet)
 		m_animation->show();
 		break;
 	case gamePanel::BOMB:
-		m_animation->setFixedSize(250, 200);
+		m_animation->setFixedSize(180, 200);
 		m_animation->move((width() - m_animation->width()) / 2, (height() - m_animation->height()) / 2 - 140);
 		m_animation->showBomb();
 		m_animation->show();
