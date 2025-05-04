@@ -13,7 +13,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
  
  
-find_package(Qt6 REQUIRED COMPONENTS Widgets Core Gui Multimedia REQUIRED)
+find_package(Qt6 COMPONENTS Widgets Core Gui Multimedia REQUIRED)#REQUIRED 
  
 #设置要包含的目录
 include_directories(

@@ -17,6 +17,7 @@
 #include "PlayHand.h"
 #include "EndingPanel.h"
 #include "CountDown.h"
+#include "BgmControl.h"
 
 gamePanel::gamePanel(QWidget *parent)
 	: QWidget(parent)
@@ -534,7 +535,7 @@ void gamePanel::onDisposePlayHand(Player* player, Cards& cards)
 	case PlayHand::Hand_Bomb_Two_Single:
 		break;
 	case PlayHand::Hand_Bomb_Jokers:
-		showAnimation(BOMB);
+		showAnimation(JOKERBOMB);
 		break;
 	case PlayHand::Hand_Bomb_Jokers_Single:
 		break;
