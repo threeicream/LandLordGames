@@ -270,5 +270,6 @@
         <file>music/Woman_tuple13.mp3</file>
         <file>music/Woman_wangzha.mp3</file>
         <file>music/Woman_zhadan.mp3</file>
+        <file>music/defeat.m4s</file>
     </qresource>
 </RCC>

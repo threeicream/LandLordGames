@@ -115,6 +115,8 @@ public:
 	//5.结算音乐
 	void PlayEndingMusic(bool iswin);
 	void stopEndingMusic();
+	//6.最后两张牌
+	void PlayLastMusic(BgmControl::CardType type, Sex sex);
 private:
 	//0man 1woman 2bgm 3辅助音乐 4结束音乐 
 	QVector<QMediaPlayer*> m_player;

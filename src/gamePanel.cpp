@@ -354,7 +354,7 @@ void gamePanel::onDispatchCard()
 			m_timer->stop();
 			//切换游戏状态
 			gameStatusProcess(GameControl::CALLINGLORD);
-
+			//m_bgm->stopSpecialMusic();
 			return;
 		}
 	}
@@ -548,6 +548,7 @@ void gamePanel::onDisposePlayHand(Player* player, Cards& cards)
 		break;
 	case PlayHand::Hand_Bomb_Jokers:
 		showAnimation(JOKERBOMB);
+		m_bgm->PlaySpecialMusic(BgmControl::BombVoice);
 		break;
 	case PlayHand::Hand_Bomb_Jokers_Two_Pair:
 		break;
@@ -563,15 +564,32 @@ void gamePanel::onDisposePlayHand(Player* player, Cards& cards)
 		it->info->setPixmap(QPixmap(":/LordGame/image/pass.png"));
 		it->info->show();
 	}
+	else {
+		bool flag;
+		if (!player->getPendPlayer() || player->getPendPlayer() == player)
+			flag = true;
+		else
+			flag = false;
+		m_bgm->PlayCardMusic(cards, flag, static_cast<BgmControl::Sex>(player->getSex()));
+	}
 	//3.更新玩家剩余的牌
 	updatePlayerCards(player);
 	//4.播放提示音效
-	bool flag;
-	if (!player->getPendPlayer() || player->getPendPlayer() == player)
-		flag = true;
-	else
-		flag = false;
-	m_bgm->PlayCardMusic(cards, flag, static_cast<BgmControl::Sex>(player->getSex()));
+	/*if (player->getCards().cardCount() == 2 && cards.cardCount() != 0)
+	{
+		m_bgm->PlayLastMusic(BgmControl::Last2, (BgmControl::Sex)player->getSex());
+	}
+	else if (player->getCards().cardCount() == 1 && cards.cardCount() != 0)
+	{
+		m_bgm->PlayLastMusic(BgmControl::Last1, (BgmControl::Sex)player->getSex());
+	}*/
+	if ((player->getCards().cardCount() == 2 || player->getCards().cardCount() == 1)&& cards.cardCount() != 0) {
+		int num = player->getCards().cardCount();
+		BgmControl::CardType type = (num == 2 ? BgmControl::Last2 : BgmControl::Last1);
+		QTimer::singleShot(700, this, [=]() {
+			m_bgm->PlayLastMusic(type, (BgmControl::Sex)player->getSex());
+			});
+	}
 }
 
 void gamePanel::showAnimation(AnimationType type, int bet)

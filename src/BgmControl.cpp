@@ -8,7 +8,7 @@
 #include <QJsonArray>
 #include <QRandomGenerator>
 #include "PlayHand.h"
-//#include <QMediaSource>
+#include <QTimer>
 
 BgmControl::BgmControl(QObject *parent)
 	: QObject(parent)
@@ -80,8 +80,9 @@ void BgmControl::initPlayList()
 
 void BgmControl::startBGM(float volume)
 {
+	int num = QRandomGenerator::global()->bounded(7);
 	m_audio[2]->setVolume(volume);
-	m_player[2]->setSource(m_list[2][0]);
+	m_player[2]->setSource(m_list[2][num]);
 	m_player[2]->play();
 }
 
@@ -227,7 +228,7 @@ void BgmControl::PlayEndingMusic(bool iswin)
 		m_player[3]->setSource(m_list[3][2]);
 	}
 	else {
-		m_player[3]->setSource(m_list[3][1]);
+		m_player[3]->setSource(m_list[3][3]);
 	}
 	m_player[3]->play();
 }
@@ -235,4 +236,20 @@ void BgmControl::PlayEndingMusic(bool iswin)
 void BgmControl::stopEndingMusic()
 {
 	m_player[3]->stop();
+}
+
+void BgmControl::PlayLastMusic(BgmControl::CardType type, Sex sex)
+{
+	int index = sex == Sex::MAN ? 0 : 1;
+	if (m_player[index]->playbackState() == QMediaPlayer::StoppedState) {
+		m_player[index]->setSource(m_list[index][type]);
+		m_player[index]->play();
+	}
+	else {
+		QTimer::singleShot(1000, this, [&]() {
+			m_player[index]->setSource(m_list[index][type]);
+			m_player[index]->play();
+			});
+	}
+	
 }

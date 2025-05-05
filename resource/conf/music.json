@@ -138,17 +138,18 @@
   ],
   "BGM": [
     "qrc:/LordGame/music/levelwait.m4s",
+    "qrc:/LordGame/music/battle.m4s",
+    "qrc:/LordGame/music/snake.m4s",
     "qrc:/LordGame/music/MusicEx_Normal.mp3",
     "qrc:/LordGame/music/MusicEx_Normal2.mp3",
     "qrc:/LordGame/music/MusicEx_Exciting.mp3",
-    "qrc:/LordGame/music/battle.m4s",
-    "qrc:/LordGame/music/snake.m4s",
     "qrc:/LordGame/music/MusicEx_Welcome.mp3"
   ],
   "Ending": [
     "qrc:/LordGame/music/MusicEx_Win.mp3",
     "qrc:/LordGame/music/MusicEx_Lose.mp3",
-    "qrc:/LordGame/music/win.m4s"
+    "qrc:/LordGame/music/win.m4s",
+    "qrc:/LordGame/music/defeat.m4s"
   ],
   "Other": [
     "qrc:/LordGame/music/Special_Dispatch.mp3",
