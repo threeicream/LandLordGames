@@ -107,9 +107,9 @@ void PlayHand::judgeCardType()
 		// 记录点数最小的牌
 		m_pt = m_fourCard[0];
 	}
-	else if (isBombSingle())
+	else if (isBombTwoPair())
 	{
-		m_type = Hand_Bomb_Single;
+		m_type = Hand_Bomb_Two_Pair;
 		// 记录点数最小的牌
 		m_pt = m_fourCard[0];
 	}
@@ -129,9 +129,9 @@ void PlayHand::judgeCardType()
 	{
 		m_type = Hand_Bomb_Jokers;
 	}
-	else if (isBombJokersSingle())
+	else if (isBombJokersTwoPair())
 	{
-		m_type = Hand_Bomb_Jokers_Single;
+		m_type = Hand_Bomb_Jokers_Two_Pair;
 	}
 	else if (isBombJokersPair())
 	{
@@ -299,9 +299,9 @@ bool PlayHand::isBomb()
 	return false;
 }
 
-bool PlayHand::isBombSingle()
+bool PlayHand::isBombTwoPair()
 {
-	if (m_oneCard.size() == 1 && m_twoCard.isEmpty() && m_threeCard.isEmpty() && m_fourCard.size() == 1) {
+	if (m_oneCard.isEmpty() && m_twoCard.size() == 2 && m_threeCard.isEmpty() && m_fourCard.size() == 1) {
 		return true;
 	}
 	return false;
@@ -335,7 +335,7 @@ bool PlayHand::isBombJokers()
 	return false;
 }
 
-bool PlayHand::isBombJokersSingle()
+bool PlayHand::isBombJokersTwoPair()
 {
 	if (m_oneCard.size() == 3 && m_twoCard.isEmpty() && m_threeCard.isEmpty() && m_fourCard.isEmpty()) {
 		std::sort(m_oneCard.begin(), m_oneCard.end());

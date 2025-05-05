@@ -25,12 +25,12 @@ public:
 		Hand_Seq_Single,//顺子 34567
 
 		Hand_Bomb,//炸弹
-		Hand_Bomb_Single,//炸弹带一个
+		Hand_Bomb_Two_Pair,//炸弹带两对
 		Hand_Bomb_Pair,//炸弹带一对
 		Hand_Bomb_Two_Single,//炸弹带两单
 
 		Hand_Bomb_Jokers,//王炸
-		Hand_Bomb_Jokers_Single,//王炸带一个
+		Hand_Bomb_Jokers_Two_Pair,//王炸带一个
 		Hand_Bomb_Jokers_Pair,//王炸带一对
 		Hand_Bomb_Jokers_Two_Single//王炸带两单
 	};
@@ -62,11 +62,11 @@ private:
 	bool isHandSeqPair();//连对 33_44_55
 	bool isHandSeqSingle();//顺子 34567
 	bool isBomb();//炸弹
-	bool isBombSingle();//炸弹带一个
+	bool isBombTwoPair();//炸弹带两对
 	bool isBombPair();//炸弹带一对
 	bool isBombTwoSingle();//炸弹带两单
 	bool isBombJokers();//王炸
-	bool isBombJokersSingle();//王炸带一个
+	bool isBombJokersTwoPair();//王炸带两对
 	bool isBombJokersPair();//王炸带一对
 	bool isBombJokersTwoSingle();//王炸带两单
 public:

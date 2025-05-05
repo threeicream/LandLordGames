@@ -18,6 +18,7 @@ class QLabel;
 class QTimer;
 class AnimationWindow;
 class EndingPanel;
+class BgmControl;
 
 class gamePanel : public QWidget
 {
@@ -133,4 +134,5 @@ private:
 	QHash<CardPanel*, QRect>m_userCards;
 	CountDown* m_countDown = nullptr;
 	int ff = 1;
+	BgmControl* m_bgm = nullptr;
 };
