@@ -174,7 +174,8 @@
     "qrc:/LordGame/music/Special_Remind.mp3",
     "qrc:/LordGame/music/Special_flower.mp3",
     "qrc:/LordGame/music/Special_menu.mp3",
-    "qrc:/LordGame/music/Special_star.mp3"
+    "qrc:/LordGame/music/Special_star.mp3",
+    "qrc:/LordGame/music/liandui.wav"
   ]
 }
 

@@ -136,7 +136,7 @@ Card Cards::takeRandCard()
 //			// 找到了指定的牌
 //			card = *it;
 //			qDebug() << "本次发牌点数：指定牌" << card.getPoint() + 2 << QString(" 第%1次发牌").arg(xy);
-//			m_cards.erase(it);
+//			m_cards.erase(it  );
 //			xy++;
 //			tt++; // 放在这里确保每次尝试指定牌都递增 tt
 //			return card;

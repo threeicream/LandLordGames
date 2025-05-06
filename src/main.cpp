@@ -1,8 +1,9 @@
 #include <QApplication>
 #include <QWidget>
-#include "gamePanel.h"
 #include <QPainter>
 #include <QFile>
+#include "Loading.h"
+#include "Cards.h"
 
 int main(int argc, char* argv[]) {
 	QApplication a(argc, argv);
@@ -13,8 +14,9 @@ int main(int argc, char* argv[]) {
 		a.setStyleSheet(stylesheet);
 		stylefile.close();
 	}*/
-
-	gamePanel w;
-	w.show();
+	Loading y;
+	y.show();
+	y.startLoading();
 	return /*QApplication::*/a.exec();
+	
 }

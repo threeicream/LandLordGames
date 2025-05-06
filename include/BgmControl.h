@@ -92,7 +92,8 @@ public:
 		PlaneVoice, // 飞机
 		BombVoice,  // 炸弹
 		Alert,      // 提醒
-		Shunzi=18   // 顺子
+		Shunzi=18,  // 顺子
+		Liandui=21, // 连对
 	};
 public:
 	BgmControl(QObject* parent = nullptr);

@@ -531,6 +531,7 @@ void gamePanel::onDisposePlayHand(Player* player, Cards& cards)
 		break;
 	case PlayHand::Hand_Seq_Pair:
 		showAnimation(LIANDUI);
+		m_bgm->PlaySpecialMusic(BgmControl::Liandui);
 		break;
 	case PlayHand::Hand_Seq_Single:
 		showAnimation(SHUNZI);
@@ -907,8 +908,11 @@ void gamePanel::onUserPlayHand()
 			}
 			return;//继续手动出
 		}
-		else
+		else if (ff) {
 			onUserPass();
+		}
+		else
+			return;
 	}
 	//判断当前玩家的牌能否压住上一个出牌玩家的牌
 	if (m_gameCtl->getPendPlayer() != m_gameCtl->getUserPlayer()) {

@@ -34,8 +34,8 @@ Cards Strategy::makeStrategy()
 	//得到出牌玩家对象以及打出的牌
 	Player* penPlayer = m_player->getPendPlayer();
 	Cards penCards = m_player->getPendCards();
-	qDebug() << "输出玩家所有牌：";
-	m_cards.getAllCardsPoint();
+	/*qDebug() << "输出玩家所有牌：";
+	m_cards.getAllCardsPoint();*/
 	//判断上次出牌的玩家是不是自己
 	if (penPlayer == m_player || penPlayer == nullptr) {//是，则出牌没有限制
 		return firstPlay();
@@ -43,6 +43,11 @@ Cards Strategy::makeStrategy()
 	else {//不是，需要找比出牌玩家点数更大的牌
 		PlayHand type(penCards);
 		Cards beatCards = getGreaterCards(type);
+		if (beatCards.isEmpty()) {
+			qDebug() << "无牌可出";
+		}
+		else
+			qDebug() << "有牌出";
 		//找到点数大的牌后考虑是否出牌
 		if (m_player->getTeamPlayer() && m_player->getTeamPlayer()->getPass()) {
 			++penNum;
@@ -308,7 +313,8 @@ Cards Strategy::firstPlay()
 	Card::CardPoint endPoint;
 	beginPoint = m_player->getCards().minPoint();
 	endPoint = m_player->getCards().maxPoint();
-	if (m_player->getRole() != nextPlayer->getRole() && nextPlayer->getCards().cardCount() < 4) {//如果下家只剩三张牌
+	if ((m_player->getRole() != nextPlayer->getRole() && nextPlayer->getCards().cardCount() < 4)//如果下家只剩三张牌
+		||(m_player->getRole() == nextPlayer->getRole() && nextPlayer->getNextPlayer()->getCards().cardCount() < 4)) {//如果下家的下家只剩三张牌
 		beginPoint = m_player->getCards().maxPoint();
 		endPoint = m_player->getCards().minPoint();
 		//beginPoint = static_cast<Card::CardPoint>(beginPoint - (beginPoint - endPoint) / 2);
@@ -432,6 +438,11 @@ bool Strategy::whetherToBeat(Cards& card)
 			if (pendPlayer->getCards().cardCount() <= 5 && m_player->getCards().cardCount() >= 5)
 				return false;
 		}
+
+		if (m_player->getNextPlayer()->getCards().cardCount() <= 2) {//如果下家手牌少于2
+			if (m_player->getPendCards().minPoint() <= Card::Card_10)//队友出牌很小
+				return true;
+		}
 	}
 
 	if (m_player->getNextPlayer()->getRole() == m_player->getRole() 
@@ -440,7 +451,7 @@ bool Strategy::whetherToBeat(Cards& card)
 		return false;
 	}
 	else if (m_player->getNextPlayer()->getRole() != m_player->getRole() 
-		&& m_player->getNextPlayer()->getCards().cardCount() > 6 
+		&& m_player->getNextPlayer()->getCards().cardCount() > 13 
 		&& penNum < 2) {//下家敌对，且牌很多
 		//if (pendPlayer->getCards().cardCount() >= 9)//队友牌很多
 		//	return true;
