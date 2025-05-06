@@ -69,7 +69,8 @@ public:
 	void clearPlayerScore();
 	//得到玩家下注的最高分数
 	int getPlayerMaxBet();
-
+	//测试牌型bug用
+	void testData();
 public slots:
 	//处理叫地主
 	void onGrabBet(Player* player, int bet);

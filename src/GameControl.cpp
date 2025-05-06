@@ -156,6 +156,17 @@ int GameControl::getPlayerMaxBet()
 	return m_betRecord.bet;
 }
 
+void GameControl::testData()
+{
+	//清空玩家手牌
+	m_robotLeft->clearCards();
+	m_robotRight->clearCards();
+	m_user->clearCards();
+	//初始化出牌玩家对象和牌
+	m_pendPlayer = nullptr;
+	m_pendCards.clear();
+}
+
 void GameControl::onPlayHand(Player* player, Cards& cards)
 {
 	//1.将玩家出牌的信号转发主界面

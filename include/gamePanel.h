@@ -133,6 +133,6 @@ private:
 	QRect m_cardsRect;//出牌区域
 	QHash<CardPanel*, QRect>m_userCards;
 	CountDown* m_countDown = nullptr;
-	int ff = 1;
+	bool ff = false;
 	BgmControl* m_bgm = nullptr;
 };

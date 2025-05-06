@@ -62,6 +62,8 @@ public:
 	explicit Cards(const Card& card);
 	~Cards();
 private:
+	int xy = 0;
+	int tt = 0;
 	QSet<Card>m_cards;//QSet容器中为自定义类时，需要重写==和qHash函数，见官方文档
 };
 

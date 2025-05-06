@@ -729,7 +729,7 @@ void gamePanel::CountDownInit()
 {
 	m_countDown = new CountDown(this);
 	connect(m_countDown, &CountDown::timeOut, this, [&]() {
-		qDebug() << QString("第%1次触发定时器").arg(ff++);
+		ff = true;
 		if (m_gameCtl->getPendPlayer() == m_gameCtl->getUserPlayer() || !m_gameCtl->getPendPlayer()) {
 			if (m_selectCards.isEmpty()) {
 				qDebug() << "user:" << m_userCards.keys().size();
@@ -755,6 +755,10 @@ void gamePanel::onPlayerStatusChanged(Player* player, GameControl::PlayerStatus 
 	switch (status)
 	{
 	case GameControl::THINKCALLLORD:
+		/*m_contextMap[m_gameCtl->getLeftRobot()].isFrontSide = true;
+		m_contextMap[m_gameCtl->getRightRobot()].isFrontSide = true;
+		updatePlayerCards(m_gameCtl->getLeftRobot());
+		updatePlayerCards(m_gameCtl->getRightRobot());*/
 		//玩家使用
 		if (player == m_gameCtl->getUserPlayer())
 			ui.buttonGroup->selectPanel(ButtonGroup::CALLLORD, m_gameCtl->getPlayerMaxBet());
@@ -783,6 +787,7 @@ void gamePanel::onPlayerStatusChanged(Player* player, GameControl::PlayerStatus 
 			ui.buttonGroup->selectPanel(ButtonGroup::EMPTY, m_gameCtl->getPlayerMaxBet());
 		break;
 	case GameControl::WINNING:
+		ui.buttonGroup->selectPanel(ButtonGroup::EMPTY);
 		//展示其他玩家的扑克牌
 		m_contextMap[m_gameCtl->getLeftRobot()].isFrontSide = true;
 		m_contextMap[m_gameCtl->getRightRobot()].isFrontSide = true;
@@ -888,14 +893,19 @@ void gamePanel::onUserPlayHand()
 	PlayHand hand(cs);
 	PlayHand::HandType type = hand.getType();
 	if (type == PlayHand::Hand_Unknown) {
-		if (m_gameCtl->getPendPlayer() == m_gameCtl->getUserPlayer() || !m_gameCtl->getPendPlayer()) {
+		if (m_gameCtl->getPendPlayer() == m_gameCtl->getUserPlayer() || !m_gameCtl->getPendPlayer()) {//只能出牌
 			for (auto it : m_selectCards) {
 				it->setSelected(false);
 			}
 			m_selectCards.clear();
-			m_selectCards.insert(m_userCards.keys()[0]);
-			onUserPlayHand();
-			return;
+			//更新玩家待出牌区域的牌
+			updatePlayerCards(m_gameCtl->getUserPlayer());
+			if (ff) {
+				m_selectCards.insert(m_userCards.keys()[0]);
+				ff = false;
+				onUserPlayHand();
+			}
+			return;//继续手动出
 		}
 		else
 			onUserPass();

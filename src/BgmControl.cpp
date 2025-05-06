@@ -230,6 +230,7 @@ void BgmControl::PlayEndingMusic(bool iswin)
 	else {
 		m_player[3]->setSource(m_list[3][3]);
 	}
+	m_audio[3]->setVolume(0.5);
 	m_player[3]->play();
 }
 
@@ -241,7 +242,9 @@ void BgmControl::stopEndingMusic()
 void BgmControl::PlayLastMusic(BgmControl::CardType type, Sex sex)
 {
 	int index = sex == Sex::MAN ? 0 : 1;
-	if (m_player[index]->playbackState() == QMediaPlayer::StoppedState) {
+	m_player[index]->setSource(m_list[index][type]);
+	m_player[index]->play();
+	/*if (m_player[index]->playbackState() == QMediaPlayer::StoppedState) {
 		m_player[index]->setSource(m_list[index][type]);
 		m_player[index]->play();
 	}
@@ -250,6 +253,6 @@ void BgmControl::PlayLastMusic(BgmControl::CardType type, Sex sex)
 			m_player[index]->setSource(m_list[index][type]);
 			m_player[index]->play();
 			});
-	}
+	}*/
 	
 }
