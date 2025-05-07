@@ -4,12 +4,13 @@
 uint qHash(const Card& card, uint seed)
 {
 	uint hash = seed;
-	hash = qHash(static_cast<int>(card.getPoint()), hash); 
-	hash = qHash(static_cast<int>(card.getSuit()), hash);   
+	hash = qHash(static_cast<int>(card.getPoint()), static_cast<size_t>(hash));
+	hash = qHash(static_cast<int>(card.getSuit()), static_cast<size_t>(hash));
 	return hash;
 }
 
 Card::Card()
+	:m_point(),m_suit()
 {
 
 }

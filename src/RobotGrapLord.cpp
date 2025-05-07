@@ -1,6 +1,7 @@
 #include "RobotGrapLord.h"
 #include "Robot.h"
 #include <QTimer>
+#include <QDebug>
 
 void RobotGrapLord::run()
 {
@@ -24,6 +25,7 @@ void robotGrapLord::workGrapLord()
 {
 	//考虑叫地主
 	QTimer::singleShot(2000, this, [&]() {m_player->thinkCallLorad(); });
+	//m_player->thinkCallLorad();
 	
 }
 
@@ -33,6 +35,7 @@ void robotGrapLord::workPlayHand()
 		m_player->thinkPlayHand(); 
 		//m_player->thinkPlayHand_api();
 		});
+	//m_player->thinkPlayHand();
 }
 
 robotGrapLord::robotGrapLord(Robot* player, QObject* parent)
@@ -42,4 +45,5 @@ robotGrapLord::robotGrapLord(Robot* player, QObject* parent)
 
 robotGrapLord::~robotGrapLord()
 {
+	qDebug() << "工作类停止";
 }

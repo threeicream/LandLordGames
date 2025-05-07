@@ -272,5 +272,6 @@
         <file>music/Woman_zhadan.mp3</file>
         <file>music/defeat.m4s</file>
         <file>music/liandui.wav</file>
+        <file>image/846.ico</file>
     </qresource>
 </RCC>

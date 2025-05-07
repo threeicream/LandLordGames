@@ -3,6 +3,7 @@
 #include "RobotGrapLord.h"
 #include "RobotPlayHand.h"
 #include <QThread>
+#include <QDebug>
 #include "Strategy.h"
 
 void Robot::prepareCallLord()
@@ -137,11 +138,30 @@ Robot::Robot(QObject *parent)
 	: Player(parent)
 {
 	this->m_tyep = Player::ROBOT;
+	/*Worker1 = new QThread(this);
+	Worker2 = new QThread(this);*/
 	//str = new Strategy(this, m_cards);
 	//connect(str, &Strategy::cardsToPlayReady, this, &Robot::playHand);
 }
 
 Robot::~Robot()
 {
-	
+	qDebug() << "QThread object destroyed";
+	//if (Worker1) { // 检查 Worker1 是否为 nullptr
+	//	if (Worker1->isRunning()) {
+	//		Worker1->quit();
+	//		Worker1->wait();
+	//	}
+	//}
+	//Worker1->deleteLater();
+	//Worker1 = nullptr;
+
+	//if (Worker2) { // 检查 Worker1 是否为 nullptr
+	//	if (Worker2->isRunning()) {
+	//		Worker2->quit();
+	//		Worker2->wait();
+	//	}
+	//}
+	//Worker2->deleteLater();
+	//Worker1 = nullptr;
 }

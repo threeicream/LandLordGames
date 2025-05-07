@@ -92,7 +92,7 @@ protected:
 		QPoint pos = event->pos(); // 获取相对于窗口客户区域的坐标
 		qDebug() << "Mouse pressed at:" << pos;
 		// 如果你想获取相对于屏幕的坐标，可以使用 event->globalPos()
-		QPoint globalPos = event->globalPos();
+		QPointF globalPos = event->globalPosition();
 		qDebug() << "Mouse pressed at (global):" << globalPos;
 	}
 private:
@@ -108,9 +108,9 @@ private:
 		//4.扑克牌显示正面还是背面
 		bool isFrontSide;
 		//5.游戏过程中的提示信息：如不出
-		QLabel* info;
+		QLabel* info = nullptr;
 		//6.玩家的头像
-		QLabel* roleImg;
+		QLabel* roleImg = nullptr;
 		//7.玩家刚打出的牌
 		Cards lastCards;
 	};
@@ -121,8 +121,8 @@ private:
 	QSize m_cardSize;
 	QPixmap m_cardBackImg;
 	QMap<Player*, PlayerContext>m_contextMap;
-	CardPanel* m_baseCard;
-	CardPanel* m_moveCard;
+	CardPanel* m_baseCard = nullptr;
+	CardPanel* m_moveCard = nullptr;
 	QVector<CardPanel*>m_last3Card;
 	QPoint m_baseCardPos;
 	GameControl::GameStatus m_gameStatus;

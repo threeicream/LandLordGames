@@ -4,6 +4,7 @@
 #include <QFile>
 #include "Loading.h"
 #include "Cards.h"
+#include <QResource>
 
 int main(int argc, char* argv[]) {
 	QApplication a(argc, argv);
@@ -14,6 +15,7 @@ int main(int argc, char* argv[]) {
 		a.setStyleSheet(stylesheet);
 		stylefile.close();
 	}*/
+	QResource::registerResource("./LordGame.rcc");
 	Loading y;
 	y.show();
 	y.startLoading();

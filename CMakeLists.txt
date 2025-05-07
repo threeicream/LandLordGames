@@ -12,7 +12,9 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
  
- 
+# 添加资源文件
+set(RC_FILE icon.rc)
+
 find_package(Qt6 COMPONENTS Widgets Core Gui Multimedia REQUIRED)#REQUIRED 
  
 #设置要包含的目录
@@ -35,6 +37,7 @@ ${PRO_SRC}
 ${PRO_INCLUDE}
 #${PRO_UI}
 ${PRO_RESOURCES}
+${RC_FILE} # 将资源文件添加到源文件中
  )
  
 #制作静态库

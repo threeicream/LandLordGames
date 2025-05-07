@@ -23,5 +23,6 @@ public:
 	Robot(QObject* parent = nullptr);
 	~Robot();
 private:
-	//Strategy* str = nullptr;
+	/*QThread* Worker1 = nullptr;
+	QThread* Worker2 = nullptr;*/
 };
